@@ -33,7 +33,7 @@ import javafx.stage.Stage;
 public class DeltaProjekt extends Application {
     Stage thestage;
     Scene startScene, statisticsScene,dailyBookingScene,alterResourcersScene, addResourceScene, alterAResourceScene;
-    
+    DB m = new DB();
     
      public static void main(String[] args) {
         launch(args);
@@ -54,7 +54,7 @@ public class DeltaProjekt extends Application {
         primaryStage.setTitle("Botes!");
         primaryStage.setScene(startScene);
         primaryStage.show();
-      
+        
     }
     public BorderPane getDailyBookingBorderPane(){
         BorderPane dailyBookingBorderPane = new BorderPane();
@@ -461,12 +461,9 @@ public class DeltaProjekt extends Application {
     firstDock0008.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Calendar cal = Calendar.getInstance();
+                
 
-   // get the value of all the calendar date fields.
-   System.out.println("Calendar's Year: " + cal.get(Calendar.YEAR));
-   System.out.println("Calendar's Month: " + cal.get(Calendar.MONTH));
-   System.out.println("Calendar's Day: " + cal.get(Calendar.DATE));
+  
             }
         });
            return gridpane;
