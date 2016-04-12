@@ -5,7 +5,11 @@
  */
 package delta.projekt;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -33,7 +37,11 @@ import javafx.stage.Stage;
 public class DeltaProjekt extends Application {
     Stage thestage;
     Scene startScene, statisticsScene,dailyBookingScene,alterResourcersScene, addResourceScene, alterAResourceScene;
-    DB m = new DB();
+    Database m = new Database();
+    
+    List<Person> persons;
+    List<Truck> trucks;
+    List<Ship> ships;
     
      public static void main(String[] args) {
         launch(args);
@@ -165,6 +173,7 @@ public class DeltaProjekt extends Application {
         vbox.setMaxWidth(140);
         vbox.setPadding(new Insets(15, 12, 15, 12));
         
+        
        
         Button back = new Button("Back");
         back.setPrefSize(120, 20);
@@ -178,12 +187,12 @@ public class DeltaProjekt extends Application {
         comboBox.getItems().addAll(
         "Person",
         "Truck",
-        "Ship",
-        "Dock"
+        "Ship"
         );
         comboBox.getSelectionModel().clearSelection();
         
         ListView listv = new ListView();
+        
         ObservableList ol = FXCollections.observableArrayList();
         listv.setItems(ol);
         
@@ -197,30 +206,58 @@ public class DeltaProjekt extends Application {
                     case "Person":
                         vbox.getChildren().clear();
                         ol.clear();
-                        ol.setAll("Kalle","Göran","Pelle");
+                        persons = m.getAllPersons();
+                       
+                        for (Person p : persons){
+                            ol.add(p);
+                        }
                         vbox.getChildren().addAll(comboBox,listv,change,remove,back);
                         listv.setPrefHeight(ol.size() * 24 + 2);
+                        
                         break;
                     case "Truck":
                         vbox.getChildren().clear();
                         ol.clear();
-                        ol.setAll("Truck1", "Truck2", "Truck3");
+                        trucks = m.getAllTrucks();
+                       
+                        for (Truck t : trucks){
+                            ol.add(t);
+                        }
+                        
                         vbox.getChildren().addAll(comboBox,listv,change,remove,back);
                         listv.setPrefHeight(ol.size() * 24 + 2);
                         break;
                     case "Ship":
                         vbox.getChildren().clear();
                         ol.clear();
-                        ol.setAll("Ship1", "Ship2", "Ship3");
+                        ships = m.getAllShip();
+                       
+                        for (Ship s : ships){
+                            ol.add(s);
+                        }
+                        
                         vbox.getChildren().addAll(comboBox,listv,change,remove,back);
                         listv.setPrefHeight(ol.size() * 24 + 2);
                         break;
-                    case "Dock":
-                        vbox.getChildren().clear();
-                        ol.clear();
-                        ol.setAll("Dock1", "Dock2", "Dock3","Dock4");
-                        vbox.getChildren().addAll(comboBox,listv,change,remove,back);
-                        listv.setPrefHeight(ol.size() * 24 + 2);
+                    default:
+                        break;
+                }
+                
+            }
+        });
+          remove.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                 switch (comboBox.getSelectionModel().getSelectedItem().toString()) {
+                    case "Person":
+                        m.removePerson(persons.get(listv.getSelectionModel().getSelectedIndex()));
+                        break;
+                    case "Truck":
+                        m.removeTruck(trucks.get(listv.getSelectionModel().getSelectedIndex()));
+                        
+                        break;
+                    case "Ship":
+                        m.removeShip(ships.get(listv.getSelectionModel().getSelectedIndex()));
                         break;
                     default:
                         break;
@@ -261,6 +298,8 @@ public class DeltaProjekt extends Application {
         TextField truckType = new TextField();
         TextField truckStatus = new TextField();
         
+        Label addMessage = new Label("Added");
+        addMessage.setVisible(false);
         Label personFirstNameLabel = new Label("FirstName:");
         Label personLastNameLabel = new Label("LastName:");
         Label personDriverLicenseLabel = new Label("Driver License:");
@@ -303,7 +342,18 @@ public class DeltaProjekt extends Application {
                         break;
                     case "Truck":
                         vbox.getChildren().clear();
-                        vbox.getChildren().addAll(comboBox,truckTypeLabel,truckType,truckStatusLabel,truckStatus,add,back);
+                        vbox.getChildren().addAll(comboBox,truckTypeLabel,truckType,truckStatusLabel,truckStatus,addMessage,add,back);
+                        add.setOnAction(new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent event) {
+                                m.addTruck(new Truck(truckType.getText(),truckStatus.getText()));
+                                truckType.clear();
+                                truckStatus.clear();
+                                addMessage.setVisible(true);
+                                
+                            }
+                        });
+                        
                         break;
                     case "Ship":
                         vbox.getChildren().clear();
@@ -463,7 +513,6 @@ public class DeltaProjekt extends Application {
             public void handle(ActionEvent event) {
                 
 
-  
             }
         });
            return gridpane;

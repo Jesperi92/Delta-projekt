@@ -2,20 +2,20 @@ package delta.projekt;
 /**
  * A class that represents a municipality.
  */
-public class Ships{
+public class Ship{
     private int id;
     private String namn;
     private String bolag;
     private String volymid;
    
-    public Ships(String name, String bolag,
+    public Ship(String name, String bolag,
 			String volymid){
 	this.namn=name;
         this.bolag=bolag;
         this.volymid=volymid;
     }
 
-    public int id(){return this.id;}
+    public int getID(){return this.id;}
 
     public String namn(){return this.namn;}
 

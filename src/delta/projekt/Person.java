@@ -33,6 +33,8 @@ public class Person{
 
     public String schema(){return this.schema;}
     
+    public int getID() { return this.id;}
+    
    
     @Override
     public String toString(){

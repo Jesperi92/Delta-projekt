@@ -15,13 +15,14 @@ public class Truck{
 
     public String gettrucktyp(){return this.trucktyp;}
 
-    public String status(){return this.status;}
+    public String gettruckstatus(){return this.status;}
+    
+    public int getID (){ return this.id;}
 
     @Override
     public String toString(){
 	return trucktyp + " | " + status;
     }
-
     public void settrucktyp(String trucktyp){
 	this.trucktyp=trucktyp;
     }

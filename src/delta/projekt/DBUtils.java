@@ -12,7 +12,7 @@ import java.sql.*;
  */
 
 public class DBUtils{
-    private final static String DB_CONN_STR="jdbc:sqlite:my_municipalities";
+    private final static String DB_CONN_STR="jdbc:sqlite:DeltaDatabase";
     static{
         try{
             Class.forName("org.sqlite.JDBC");
