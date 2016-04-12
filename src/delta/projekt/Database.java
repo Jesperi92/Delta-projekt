@@ -55,7 +55,7 @@ public class Database implements InterfaceDB{
     }
     public List<Ship>getAllShip(){
 	ArrayList<Ship> list = new ArrayList<Ship>();
-	ResultSet rs = db.executeQuery("SELECT * FROM Person");
+	ResultSet rs = db.executeQuery("SELECT * FROM Ship");
 	try{
 	    Ship m=null;
 	    while(rs.next()){
@@ -75,15 +75,31 @@ public class Database implements InterfaceDB{
 	}
 	return null;
     }
-  /*  public void updateCity(Municipality m){
-	int id = m.id();
-	String SQL="UPDATE municipalities SET HTTPS="+
-	    (m.supportsHTTPS()?"1":"0") +
-	    " WHERE MunicipalityID="+id;
+    public void updatePerson(Person p, String column, String uppdate){
+	int id = p.getID();
+	String SQL="UPDATE Person SET "+column+"="+uppdate+
+                "WHERE PersonID="+id;
 	System.out.println(db.executeUpdate(SQL) 
 			   + " rows updated");
     
-    */
+    }
+    public void updateTruck(Truck p, String column, String uppdate){
+	int id = p.getID();
+	String SQL="UPDATE Truck SET "+column+"="+uppdate+
+                "WHERE TruckID="+id;
+	System.out.println(db.executeUpdate(SQL) 
+			   + " rows updated");
+    
+    }
+    public void updateShip(Ship p, String column, String uppdate){
+	int id = p.getID();
+	String SQL="UPDATE Ship SET "+column+"="+uppdate+
+                "WHERE ShipID="+id;
+	System.out.println(db.executeUpdate(SQL) 
+			   + " rows updated");
+    
+    }
+    
     public void removePerson(Person person){
 	int id = person.getID();
         
@@ -105,8 +121,8 @@ public class Database implements InterfaceDB{
     public void removeShip(Ship ship){
 	int id = ship.getID();
         
-	String SQL="DELETE FROM Truck"+
-	    " WHERE TruckID="+id;
+	String SQL="DELETE FROM Ship"+
+	    " WHERE ShipID="+id;
 	System.out.println(db.executeUpdate(SQL) +
 			   " rows deleted");
 	
@@ -114,17 +130,33 @@ public class Database implements InterfaceDB{
     
     public void addTruck(Truck m){
 	int id=m.getID();
-	String trucktyp=m.gettrucktyp();
-	String truckstatus=m.gettruckstatus();
 	
 	String SQL="INSERT INTO Truck"+
 	    "(Trucktyp, Status)" +
-	    " VALUES('"+trucktyp+"', "+
-	    "'"+truckstatus+"')";
+	    " VALUES('"+m.gettrucktyp()+"', "+
+	    "'"+m.gettruckstatus()+"')";
 	System.out.println(db.executeUpdate(SQL)+
 			   " rows inserted");
-
+    }
+     public void addPerson(Person m){
+	int id=m.getID();
 	
+	String SQL="INSERT INTO Person"+
+	    "(Förnamn, Efternamn, Körkort, Status, Schema)" +
+	    " VALUES('"+m.förnamn()+"', '"+m.efternamn()+"', '"+m.körkort()+"', '"+m.status()+"', '"+m.schema()+"')";
+	System.out.println(db.executeUpdate(SQL)+
+			   " rows inserted");
+    }
+      public void addShip(Ship m){
+	int id=m.getID();
+	
+	
+	String SQL="INSERT INTO Ship"+
+	    "(Namn, Bolag, VolymID)" +
+	    " VALUES('"+m.namn()+"', "+m.bolag()+"', "+
+	    "'"+m.volymid()+"')";
+	System.out.println(db.executeUpdate(SQL)+
+			   " rows inserted");
     }
     /*
     public Municipality getByName(String name){
