@@ -7,14 +7,15 @@ public class Person{
     private String körkort;
     private String status;
     private String schema;
-  
-    public Person(String förname, String efternamn,
+    private String wage;
+    public Person(String förnamn, String efternamn,
 			String körkort, String status, String schema){
                 this.efternamn = efternamn;
                 this.förnamn=förnamn;
                 this.körkort=körkort;
                 this.status=status;
                 this.schema=schema;
+                
                 
     }
 
@@ -35,12 +36,14 @@ public class Person{
     
     public int getID() { return this.id;}
     
+    public String getwage() {return this.wage;}
+    
    
     @Override
     public String toString(){
-	return förnamn + " | " + efternamn + " | " +
+	return id +" | "+förnamn + " | " + efternamn + " | " +
 	    körkort + " | " + 
-	    status+" | "+schema;
+	    status+" | "+schema+" | "+wage;
     }
 
     public void setförnamn(String förnamn){
@@ -58,6 +61,9 @@ public class Person{
     }
     public void setstatus(String status){
 	this.status=status;
+    }
+    public void setWage(String wage){
+	this.wage=wage;
     }
     public void setID(int id){
 	this.id=id;

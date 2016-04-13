@@ -36,12 +36,16 @@ import javafx.stage.Stage;
 
 public class DeltaProjekt extends Application {
     Stage thestage;
-    Scene startScene, statisticsScene,dailyBookingScene,alterResourcersScene, addResourceScene, alterAResourceScene;
+    Scene startScene, statisticsScene,dailyBookingScene,alterResourcersScene, addResourceScene, alterAResourceScene,changeARecourceScene;
     Database m = new Database();
     
     List<Person> persons;
     List<Truck> trucks;
     List<Ship> ships;
+    
+    Person changeperson;
+    Truck changetruck;
+    Ship changeship;
     
      public static void main(String[] args) {
         launch(args);
@@ -58,11 +62,16 @@ public class DeltaProjekt extends Application {
         alterResourcersScene = new Scene(getAlterResourcesPageBorderPane(), 500, 550);
         addResourceScene = new Scene(getAddRecourseBorderPane(), 500, 550);
         alterAResourceScene = new Scene(getAlterAResourceBorderPane(), 500, 550);
-        
+        changeARecourceScene = new Scene(getChangeARecourceSceneBorderPane(),500,550);
         primaryStage.setTitle("Botes!");
         primaryStage.setScene(startScene);
         primaryStage.show();
         
+    }
+    public BorderPane getChangeARecourceSceneBorderPane(){
+        BorderPane changeARecourceSceneBorderPane = new BorderPane();
+        
+        return changeARecourceSceneBorderPane;
     }
     public BorderPane getDailyBookingBorderPane(){
         BorderPane dailyBookingBorderPane = new BorderPane();
@@ -207,7 +216,7 @@ public class DeltaProjekt extends Application {
                         vbox.getChildren().clear();
                         ol.clear();
                         persons = m.getAllPersons();
-                       
+                        
                         for (Person p : persons){
                             ol.add(p);
                         }
@@ -265,6 +274,28 @@ public class DeltaProjekt extends Application {
                 
             }
         });
+          change.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                 switch (comboBox.getSelectionModel().getSelectedItem().toString()) {
+                    case "Person":
+                        changeperson = persons.get(listv.getSelectionModel().getSelectedIndex());
+                        thestage.setScene(changeARecourceScene);
+                        break;
+                    case "Truck":
+                        changetruck = trucks.get(listv.getSelectionModel().getSelectedIndex());
+                        thestage.setScene(changeARecourceScene);
+                        break;
+                    case "Ship":
+                        changeship = ships.get(listv.getSelectionModel().getSelectedIndex());
+                        thestage.setScene(changeARecourceScene);
+                        break;
+                    default:
+                        break;
+                }
+                
+            }
+        });
           back.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -290,6 +321,7 @@ public class DeltaProjekt extends Application {
         TextField personDriverLicense = new TextField();
         TextField personStatus = new TextField();
         TextField personSchedual = new TextField();
+        
         TextField shipName = new TextField();
         TextField shipCompany = new TextField();
         TextField shipVolume = new TextField();
@@ -298,6 +330,14 @@ public class DeltaProjekt extends Application {
         TextField truckType = new TextField();
         TextField truckStatus = new TextField();
         
+        ComboBox pdriverlicence = new ComboBox();
+        pdriverlicence.getItems().addAll("A","AA","B","BB","C","CC","CCC","K");
+        ComboBox pstatus = new ComboBox();
+        pstatus.getItems().addAll("100%","50%","Sjuk","VAB","Student","Semester");
+        ComboBox pschedual = new ComboBox();
+        pschedual.getItems().addAll("M-F","L-S","S");
+        
+        
         Label addMessage = new Label("Added");
         addMessage.setVisible(false);
         Label personFirstNameLabel = new Label("FirstName:");
@@ -305,6 +345,7 @@ public class DeltaProjekt extends Application {
         Label personDriverLicenseLabel = new Label("Driver License:");
         Label personStatusLabel = new Label("Status:");
         Label personSchedualLabel = new Label("Schedual:");
+        Label personWageLabel = new Label("Wage");
         Label shipNameLabel = new Label("Name:");
         Label shipCompanyLabel = new Label("Company:");
         Label shipVolumeLabel = new Label("Volume");
@@ -337,8 +378,18 @@ public class DeltaProjekt extends Application {
                     case "Person":
                         vbox.getChildren().clear();
                         vbox.getChildren().addAll(comboBox,personFirstNameLabel,personFirstName,personLastNameLabel, personLastName,
-                        personDriverLicenseLabel, personDriverLicense, personStatusLabel, personStatus, personSchedualLabel,personSchedual,add,back);
-                        
+                        personDriverLicenseLabel, pdriverlicence, personStatusLabel, pstatus, personSchedualLabel,pschedual,add,back);
+                        add.setOnAction(new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent event) {
+                               
+                               
+                                m.addPerson(new Person(personFirstName.getText(),personLastName.getText(),pdriverlicence.getSelectionModel().getSelectedItem().toString(),pstatus.getSelectionModel().getSelectedItem().toString(),pschedual.getSelectionModel().getSelectedItem().toString()));
+                                
+                                addMessage.setVisible(true);
+                                
+                            }
+                        });
                         break;
                     case "Truck":
                         vbox.getChildren().clear();
@@ -517,5 +568,36 @@ public class DeltaProjekt extends Application {
         });
            return gridpane;
       }
+      public VBox addChangeARecourseMenuBtns(){
+        VBox changeARecoursePageVbox = new VBox(20);
+        
+        changeARecoursePageVbox.setAlignment(Pos.TOP_CENTER);
+        changeARecoursePageVbox.setMaxWidth(200);
+        changeARecoursePageVbox.setPadding(new Insets(15, 12, 15, 12));
+        
+        
+        Label id = new Label("ID: "+Integer.toString(changeperson.getID()));
+        
+        TextField personFirstName = new TextField();
+        TextField personLastName = new TextField();
+        personFirstName.setText(changeperson.förnamn());
+        personLastName.setText(changeperson.efternamn());
+        
+        ComboBox pdriverlicence = new ComboBox();
+        pdriverlicence.getItems().addAll("A","AA","B","BB","C","CC","CCC","K");
+        pdriverlicence.getSelectionModel().select(changeperson.körkort());
+        
+        ComboBox pstatus = new ComboBox();
+        pstatus.getItems().addAll("100%","50%","Sjuk","VAB","Student","Semester");
+        pstatus.getSelectionModel().select(changeperson.status());
+        ComboBox pschedual = new ComboBox();
+        pschedual.getItems().addAll("M-F","L-S","S");
+        pschedual.getSelectionModel().select(changeperson.schema());
+        
+        changeARecoursePageVbox.getChildren().setAll(id,personFirstName,personLastName,pdriverlicence,pstatus,pschedual);
+        
+        return changeARecoursePageVbox;
+        
+    }
     
 }
