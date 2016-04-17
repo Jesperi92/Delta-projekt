@@ -25,7 +25,7 @@ public class Ship{
     
     @Override
     public String toString(){
-	return namn + " | " + bolag + " | " +
+	return id + " | " + namn + " | " + bolag + " | " +
 	    volymid;
     }
 
@@ -39,7 +39,7 @@ public class Ship{
     public void setbolag(String bolag){
 	this.bolag=bolag;
     }
-    public void setID(String voymid){
+    public void setVolumeID(String volymid){
 	this.volymid = volymid;
     }
 }

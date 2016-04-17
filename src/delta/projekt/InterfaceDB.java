@@ -12,7 +12,7 @@ public interface InterfaceDB{
     public void removePerson(Person person);
     public void removeTruck(Truck truck);
     public void removeShip(Ship ship);
-    public void updatePerson(Person p, String column, String uppdate);
-    public void updateShip(Ship p, String column, String uppdate);
-    public void updateTruck(Truck p, String column, String uppdate);
+    public void updatePerson(Person p);
+    public void updateShip(Ship p);
+    public void updateTruck(Truck p);
 }

@@ -4,7 +4,7 @@ public class Truck{
     private int id;
     private String trucktyp;
     private String status;
-    
+    private int fee;
     
    
     public Truck(String trucktyp, String status){
@@ -12,7 +12,7 @@ public class Truck{
 	this.status=status;
 
     }
-
+    public int gettruckfee(){return this.fee;}
     public String gettrucktyp(){return this.trucktyp;}
 
     public String gettruckstatus(){return this.status;}
@@ -21,7 +21,7 @@ public class Truck{
 
     @Override
     public String toString(){
-	return trucktyp + " | " + status;
+	return id + " | " +trucktyp + " | " + status + " | " + fee;
     }
     public void settrucktyp(String trucktyp){
 	this.trucktyp=trucktyp;
@@ -32,5 +32,8 @@ public class Truck{
     }
     public void setID(int id){
 	this.id=id;
+    }
+    public void setFee(int fee){
+        this.fee=fee;
     }
 }

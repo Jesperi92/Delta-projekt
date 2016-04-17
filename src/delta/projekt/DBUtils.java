@@ -70,12 +70,7 @@ public class DBUtils{
 	}
 	return null;
     }
-    /**
-     * Executes an SQL update statement, provided as the String argument
-     * @param sql The SQL update statement as a String
-     * @return An int representing how many rows were updated or -1 if the statement fails
-     *
-     */
+    
     public int executeUpdate(String sql){
 	Statement stm=null;
 	if(hasConnection()){
@@ -90,10 +85,7 @@ public class DBUtils{
 	}
 	return -1;
     }
-    /**
-     * Closes an AutoCloseable, for instance a ResultSet or a Statement.
-     * @param it The AutoCloseable to be closed
-     */
+   
     public void closeIt(AutoCloseable it){     
         try{
             it.close();
@@ -101,16 +93,5 @@ public class DBUtils{
             error("Exception closing: "+e.getMessage());
         }
     }
-    /* 
-    //What is this? Try to figure out!
-    public PreparedStatement preparedStatement(String sql){
-	try{
-	    return con.prepareStatement(sql);
-	}catch(Exception e){
-	    System.err.println("DBUtils: Error getting prepared stm: " + e.getMessage());
-	    e.printStackTrace();
-	    return null;
-	}
-    }
-    */
+    
 }

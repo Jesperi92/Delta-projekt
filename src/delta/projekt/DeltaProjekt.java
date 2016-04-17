@@ -5,11 +5,20 @@
  */
 package delta.projekt;
 
+import java.awt.Font;
+import java.io.File;
+import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.animation.FadeTransition;
+import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.SequentialTransition;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,6 +27,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -33,6 +43,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class DeltaProjekt extends Application {
     Stage thestage;
@@ -46,6 +57,11 @@ public class DeltaProjekt extends Application {
     Person changeperson;
     Truck changetruck;
     Ship changeship;
+    ObservableList ol;
+    ListView listv;
+    
+    Label alterMessage;
+    File f;
     
      public static void main(String[] args) {
         launch(args);
@@ -55,23 +71,47 @@ public class DeltaProjekt extends Application {
     public void start(Stage primaryStage) {
         
         thestage = primaryStage;
-     
+        thestage.initStyle(StageStyle.UNDECORATED);
         startScene = new Scene(getStartPageBorderPane(), 500, 550);
         statisticsScene = new Scene(getStatisticsPageBorderPane(), 500, 550);
         dailyBookingScene = new Scene(getDailyBookingBorderPane(), 500, 550);
         alterResourcersScene = new Scene(getAlterResourcesPageBorderPane(), 500, 550);
         addResourceScene = new Scene(getAddRecourseBorderPane(), 500, 550);
         alterAResourceScene = new Scene(getAlterAResourceBorderPane(), 500, 550);
-        changeARecourceScene = new Scene(getChangeARecourceSceneBorderPane(),500,550);
+        
+        f = new File("newfile.css");
+        startScene.getStylesheets().clear();
+        startScene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
+        statisticsScene.getStylesheets().clear();
+        statisticsScene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
+        dailyBookingScene.getStylesheets().clear();
+        dailyBookingScene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
+        alterResourcersScene.getStylesheets().clear();
+        alterResourcersScene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
+        addResourceScene.getStylesheets().clear();
+        addResourceScene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
+        alterAResourceScene.getStylesheets().clear();
+        alterAResourceScene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
+       
         primaryStage.setTitle("Botes!");
         primaryStage.setScene(startScene);
         primaryStage.show();
         
     }
-    public BorderPane getChangeARecourceSceneBorderPane(){
-        BorderPane changeARecourceSceneBorderPane = new BorderPane();
-        
-        return changeARecourceSceneBorderPane;
+    public BorderPane getChangeAPersonSceneBorderPane(){
+        BorderPane changeAPersonSceneBorderPane = new BorderPane();
+        changeAPersonSceneBorderPane.setCenter(addChangeAPersonMenuBtns());
+        return changeAPersonSceneBorderPane;
+    }
+    public BorderPane getChangeAShipSceneBorderPane(){
+        BorderPane changeAShipSceneBorderPane = new BorderPane();
+        changeAShipSceneBorderPane.setCenter(addChangeAShipMenuBtns());
+        return changeAShipSceneBorderPane;
+    }
+    public BorderPane getChangeATruckSceneBorderPane(){
+        BorderPane changeATruckSceneBorderPane = new BorderPane();
+        changeATruckSceneBorderPane.setCenter(addChangeATruckMenuBtns());
+        return changeATruckSceneBorderPane;
     }
     public BorderPane getDailyBookingBorderPane(){
         BorderPane dailyBookingBorderPane = new BorderPane();
@@ -179,10 +219,18 @@ public class DeltaProjekt extends Application {
        
         VBox vbox = new VBox(20);
         vbox.setAlignment(Pos.TOP_CENTER);
-        vbox.setMaxWidth(140);
+        vbox.setMaxWidth(300);
         vbox.setPadding(new Insets(15, 12, 15, 12));
         
-        
+        alterMessage = new Label();
+                                
+                                FadeTransition fader = createFader(alterMessage);
+                                SequentialTransition blinkThenFade = new SequentialTransition(
+                                        alterMessage,
+                                      
+                                        fader
+                                );
+        alterMessage.setVisible(false);
        
         Button back = new Button("Back");
         back.setPrefSize(120, 20);
@@ -200,9 +248,9 @@ public class DeltaProjekt extends Application {
         );
         comboBox.getSelectionModel().clearSelection();
         
-        ListView listv = new ListView();
+        listv = new ListView();
         
-        ObservableList ol = FXCollections.observableArrayList();
+        ol = FXCollections.observableArrayList();
         listv.setItems(ol);
         
         vbox.getChildren().addAll(comboBox,back);
@@ -211,8 +259,10 @@ public class DeltaProjekt extends Application {
             @Override
             public void handle(ActionEvent event) {
                 
+                    
                 switch (comboBox.getSelectionModel().getSelectedItem().toString()) {
                     case "Person":
+                        
                         vbox.getChildren().clear();
                         ol.clear();
                         persons = m.getAllPersons();
@@ -220,11 +270,13 @@ public class DeltaProjekt extends Application {
                         for (Person p : persons){
                             ol.add(p);
                         }
-                        vbox.getChildren().addAll(comboBox,listv,change,remove,back);
+                        vbox.getChildren().addAll(comboBox,listv,alterMessage,change,remove,back);
                         listv.setPrefHeight(ol.size() * 24 + 2);
+                        listv.setPrefWidth(300);
                         
                         break;
                     case "Truck":
+                        
                         vbox.getChildren().clear();
                         ol.clear();
                         trucks = m.getAllTrucks();
@@ -233,10 +285,12 @@ public class DeltaProjekt extends Application {
                             ol.add(t);
                         }
                         
-                        vbox.getChildren().addAll(comboBox,listv,change,remove,back);
+                        vbox.getChildren().addAll(comboBox,listv,alterMessage,change,remove,back);
                         listv.setPrefHeight(ol.size() * 24 + 2);
+                        listv.setPrefWidth(150);
                         break;
                     case "Ship":
+                        
                         vbox.getChildren().clear();
                         ol.clear();
                         ships = m.getAllShip();
@@ -245,55 +299,91 @@ public class DeltaProjekt extends Application {
                             ol.add(s);
                         }
                         
-                        vbox.getChildren().addAll(comboBox,listv,change,remove,back);
+                        vbox.getChildren().addAll(comboBox,listv,alterMessage,change,remove,back);
                         listv.setPrefHeight(ol.size() * 24 + 2);
+                        listv.setPrefWidth(200);
                         break;
                     default:
                         break;
                 }
-                
-            }
+                }
+            
         });
           remove.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                if(!(listv.getSelectionModel().getSelectedIndex() == -1)){
                  switch (comboBox.getSelectionModel().getSelectedItem().toString()) {
                     case "Person":
                         m.removePerson(persons.get(listv.getSelectionModel().getSelectedIndex()));
+                        alterMessage.setText("Removed");
+                        alterMessage.setVisible(true);
+                                blinkThenFade.play();
+                        persons = m.getAllPersons();
+                        ol.clear();
+                        ol.addAll(persons);
+                        listv.setItems(ol);
                         break;
                     case "Truck":
                         m.removeTruck(trucks.get(listv.getSelectionModel().getSelectedIndex()));
+                        alterMessage.setText("Removed");
+                        alterMessage.setVisible(true);
+                                blinkThenFade.play();
+                        trucks = m.getAllTrucks();
+                        ol.clear();
+                        ol.addAll(trucks);
+                        listv.setItems(ol);
                         
                         break;
                     case "Ship":
                         m.removeShip(ships.get(listv.getSelectionModel().getSelectedIndex()));
+                        alterMessage.setText("Removed");
+                        alterMessage.setVisible(true);
+                                blinkThenFade.play();
+                        ships = m.getAllShip();
+                        ol.clear();
+                        ol.addAll(ships);
+                        listv.setItems(ol);
                         break;
                     default:
                         break;
                 }
-                
+                }
             }
         });
           change.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                if(!(listv.getSelectionModel().getSelectedIndex() == -1)){
                  switch (comboBox.getSelectionModel().getSelectedItem().toString()) {
                     case "Person":
+                        alterMessage.setText("Uppdated");
                         changeperson = persons.get(listv.getSelectionModel().getSelectedIndex());
+                        changeARecourceScene = new Scene(getChangeAPersonSceneBorderPane(),500,550);
+                        changeARecourceScene.getStylesheets().clear();
+                        changeARecourceScene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
                         thestage.setScene(changeARecourceScene);
                         break;
                     case "Truck":
+                        alterMessage.setText("Uppdated");
                         changetruck = trucks.get(listv.getSelectionModel().getSelectedIndex());
+                        changeARecourceScene = new Scene(getChangeATruckSceneBorderPane(),500,550);
+                        changeARecourceScene.getStylesheets().clear();
+                        changeARecourceScene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
                         thestage.setScene(changeARecourceScene);
                         break;
                     case "Ship":
+                        alterMessage.setText("Uppdated");
                         changeship = ships.get(listv.getSelectionModel().getSelectedIndex());
+                        changeARecourceScene = new Scene(getChangeAShipSceneBorderPane(),500,550);
+                        changeARecourceScene.getStylesheets().clear();
+                        changeARecourceScene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
                         thestage.setScene(changeARecourceScene);
                         break;
                     default:
                         break;
                 }
-                
+                }
             }
         });
           back.setOnAction(new EventHandler<ActionEvent>() {
@@ -318,39 +408,48 @@ public class DeltaProjekt extends Application {
         vbox.setPadding(new Insets(15, 12, 15, 12));
         TextField personFirstName = new TextField();
         TextField personLastName = new TextField();
-        TextField personDriverLicense = new TextField();
-        TextField personStatus = new TextField();
-        TextField personSchedual = new TextField();
+        
         
         TextField shipName = new TextField();
-        TextField shipCompany = new TextField();
-        TextField shipVolume = new TextField();
-        TextField dockName = new TextField();
-        TextField dockVolume = new TextField();
-        TextField truckType = new TextField();
-        TextField truckStatus = new TextField();
+        ComboBox shipCompany = new ComboBox();
+        shipCompany.getItems().addAll("StenaLine", "FlyteTyg AB", "SiljaLine");
         
-        ComboBox pdriverlicence = new ComboBox();
-        pdriverlicence.getItems().addAll("A","AA","B","BB","C","CC","CCC","K");
+        
+        
+        ComboBox truckStatus = new ComboBox();
+        truckStatus.getItems().addAll("Ok", "Reparation", "Reserv","Inaktiv");
+        
+        ComboBox trucktype = new ComboBox();
+        trucktype.getItems().addAll("A","AA","B","BB","C","CC","CCC","K");
+        ComboBox licence = new ComboBox();
+        licence.getItems().addAll("A","AA","B","BB","C","CC","CCC","K");
+        ComboBox volume = new ComboBox();
+        volume.getItems().addAll("A","AA","B","BB","C","CC","CCC","K");
+        
         ComboBox pstatus = new ComboBox();
         pstatus.getItems().addAll("100%","50%","Sjuk","VAB","Student","Semester");
         ComboBox pschedual = new ComboBox();
         pschedual.getItems().addAll("M-F","L-S","S");
         
-        
         Label addMessage = new Label("Added");
+                                
+                                FadeTransition fader = createFader(addMessage);
+                                SequentialTransition blinkThenFade = new SequentialTransition(
+                                        addMessage,
+                                      
+                                        fader
+                                );
         addMessage.setVisible(false);
         Label personFirstNameLabel = new Label("FirstName:");
         Label personLastNameLabel = new Label("LastName:");
         Label personDriverLicenseLabel = new Label("Driver License:");
         Label personStatusLabel = new Label("Status:");
         Label personSchedualLabel = new Label("Schedual:");
-        Label personWageLabel = new Label("Wage");
+        
         Label shipNameLabel = new Label("Name:");
         Label shipCompanyLabel = new Label("Company:");
         Label shipVolumeLabel = new Label("Volume");
-        Label dockNameLabel = new Label("Name:");
-        Label dockVolumeLabel = new Label("Volume");
+        
         Label truckTypeLabel = new Label("Type");
         Label truckStatusLabel = new Label("Status:");
         
@@ -365,8 +464,7 @@ public class DeltaProjekt extends Application {
         comboBox.getItems().addAll(
         "Person",
         "Truck",
-        "Ship",
-        "Dock"
+        "Ship"
         );
         
         vbox.getChildren().addAll(comboBox,back);
@@ -378,29 +476,29 @@ public class DeltaProjekt extends Application {
                     case "Person":
                         vbox.getChildren().clear();
                         vbox.getChildren().addAll(comboBox,personFirstNameLabel,personFirstName,personLastNameLabel, personLastName,
-                        personDriverLicenseLabel, pdriverlicence, personStatusLabel, pstatus, personSchedualLabel,pschedual,add,back);
+                        personDriverLicenseLabel, licence, personStatusLabel, pstatus, personSchedualLabel,pschedual,addMessage,add,back);
                         add.setOnAction(new EventHandler<ActionEvent>() {
                             @Override
                             public void handle(ActionEvent event) {
                                
                                
-                                m.addPerson(new Person(personFirstName.getText(),personLastName.getText(),pdriverlicence.getSelectionModel().getSelectedItem().toString(),pstatus.getSelectionModel().getSelectedItem().toString(),pschedual.getSelectionModel().getSelectedItem().toString()));
-                                
+                                m.addPerson(new Person(personFirstName.getText(),personLastName.getText(),licence.getSelectionModel().getSelectedItem().toString(),pstatus.getSelectionModel().getSelectedItem().toString(),pschedual.getSelectionModel().getSelectedItem().toString()));
                                 addMessage.setVisible(true);
-                                
+                                blinkThenFade.play();
                             }
                         });
                         break;
                     case "Truck":
                         vbox.getChildren().clear();
-                        vbox.getChildren().addAll(comboBox,truckTypeLabel,truckType,truckStatusLabel,truckStatus,addMessage,add,back);
+                        vbox.getChildren().addAll(comboBox,truckTypeLabel,trucktype,truckStatusLabel,truckStatus,addMessage,add,back);
                         add.setOnAction(new EventHandler<ActionEvent>() {
                             @Override
                             public void handle(ActionEvent event) {
-                                m.addTruck(new Truck(truckType.getText(),truckStatus.getText()));
-                                truckType.clear();
-                                truckStatus.clear();
+                                
+        
+                                m.addTruck(new Truck(trucktype.getSelectionModel().getSelectedItem().toString(),truckStatus.getSelectionModel().getSelectedItem().toString()));
                                 addMessage.setVisible(true);
+                                blinkThenFade.play();
                                 
                             }
                         });
@@ -408,11 +506,16 @@ public class DeltaProjekt extends Application {
                         break;
                     case "Ship":
                         vbox.getChildren().clear();
-                        vbox.getChildren().addAll(comboBox,shipNameLabel, shipName,shipCompanyLabel,shipCompany,shipVolumeLabel,shipVolume,add,back);
-                        break;
-                    case "Dock":
-                        vbox.getChildren().clear();
-                        vbox.getChildren().addAll(comboBox,dockNameLabel,dockName,dockVolumeLabel,dockVolume,add,back);
+                        vbox.getChildren().addAll(comboBox,shipNameLabel, shipName,shipCompanyLabel,shipCompany,shipVolumeLabel,volume,addMessage,add,back);
+                        add.setOnAction(new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent event) {
+                                m.addShip(new Ship(shipName.getText(),shipCompany.getSelectionModel().getSelectedItem().toString(), volume.getSelectionModel().getSelectedItem().toString()));
+                                addMessage.setVisible(true);
+                                blinkThenFade.play();
+                                
+                            }
+                        });
                         break;
                     default:
                         break;
@@ -568,15 +671,20 @@ public class DeltaProjekt extends Application {
         });
            return gridpane;
       }
-      public VBox addChangeARecourseMenuBtns(){
+      public VBox addChangeAPersonMenuBtns(){
         VBox changeARecoursePageVbox = new VBox(20);
         
         changeARecoursePageVbox.setAlignment(Pos.TOP_CENTER);
         changeARecoursePageVbox.setMaxWidth(200);
         changeARecoursePageVbox.setPadding(new Insets(15, 12, 15, 12));
         
-        
         Label id = new Label("ID: "+Integer.toString(changeperson.getID()));
+        FadeTransition fader = createFader(alterMessage);
+                                SequentialTransition blinkThenFade = new SequentialTransition(
+                                        alterMessage,
+                                      
+                                        fader
+                                );
         
         TextField personFirstName = new TextField();
         TextField personLastName = new TextField();
@@ -594,10 +702,176 @@ public class DeltaProjekt extends Application {
         pschedual.getItems().addAll("M-F","L-S","S");
         pschedual.getSelectionModel().select(changeperson.schema());
         
-        changeARecoursePageVbox.getChildren().setAll(id,personFirstName,personLastName,pdriverlicence,pstatus,pschedual);
+        Button save = new Button("Save");
+        Button back = new Button("Back");
+        back.setPrefSize(120, 20);
+        save.setPrefSize(120, 20);
+        changeARecoursePageVbox.getChildren().setAll(id, personFirstName,personLastName,pdriverlicence,pstatus,pschedual,save,back);
+        
+        save.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                changeperson.setförnamn(personFirstName.getText());
+                changeperson.setefternamn(personLastName.getText());
+                changeperson.setkörkort(pdriverlicence.getSelectionModel().getSelectedItem().toString());
+                changeperson.setstatus(pstatus.getSelectionModel().getSelectedItem().toString());
+                changeperson.setschema(pschedual.getSelectionModel().getSelectedItem().toString());
+                m.updatePerson(changeperson);
+                persons = m.getAllPersons();
+                ol.clear();
+                ol.addAll(persons);
+                listv.setItems(ol);
+                blinkThenFade.play();
+                thestage.setScene(alterAResourceScene);
+            }
+        });
+        back.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                persons = m.getAllPersons();
+                ol.clear();
+                ol.addAll(persons);
+                listv.setItems(ol);
+                thestage.setScene(alterAResourceScene);
+            }
+        });
         
         return changeARecoursePageVbox;
         
+    }
+      public VBox addChangeAShipMenuBtns(){
+        VBox changeARecoursePageVbox = new VBox(20);
+        
+        changeARecoursePageVbox.setAlignment(Pos.TOP_CENTER);
+        changeARecoursePageVbox.setMaxWidth(200);
+        changeARecoursePageVbox.setPadding(new Insets(15, 12, 15, 12));
+        
+        Label id = new Label("ID: "+Integer.toString(changeship.getID()));
+        
+        
+        TextField shipname = new TextField();
+        
+        shipname.setText(changeship.namn());
+        
+        FadeTransition fader = createFader(alterMessage);
+                                SequentialTransition blinkThenFade = new SequentialTransition(
+                                        alterMessage,
+                                      
+                                        fader
+                                );
+        ComboBox shipvolume = new ComboBox();
+        shipvolume.getItems().addAll("A","AA","B","BB","C","CC","CCC","K");
+        shipvolume.getSelectionModel().select(changeship.volymid());
+        
+        ComboBox shipCompany = new ComboBox();
+        shipCompany.getItems().addAll("StenaLine", "FlyteTyg AB", "SiljaLine");
+        shipCompany.getSelectionModel().select(changeship.bolag());
+       
+        Button save = new Button("Save");
+        Button back = new Button("Back");
+        back.setPrefSize(120, 20);
+        save.setPrefSize(120, 20);
+        changeARecoursePageVbox.getChildren().setAll(id, shipname,shipvolume,shipCompany,save,back);
+        
+        save.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                changeship.setnamn(shipname.getText());
+                
+                changeship.setVolumeID(shipvolume.getSelectionModel().getSelectedItem().toString());
+                changeship.setbolag(shipCompany.getSelectionModel().getSelectedItem().toString());
+                
+                m.updateShip(changeship);
+                ships = m.getAllShip();
+                ol.clear();
+                ol.addAll(ships);
+                listv.setItems(ol);
+                blinkThenFade.play();
+                thestage.setScene(alterAResourceScene);
+            }
+        });
+        back.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                ships = m.getAllShip();
+                ol.clear();
+                ol.addAll(ships);
+                listv.setItems(ol);
+                thestage.setScene(alterAResourceScene);
+            }
+        });
+        
+        return changeARecoursePageVbox;
+        
+    }
+      public VBox addChangeATruckMenuBtns(){
+        VBox changeARecoursePageVbox = new VBox(20);
+        
+        changeARecoursePageVbox.setAlignment(Pos.TOP_CENTER);
+        changeARecoursePageVbox.setMaxWidth(200);
+        changeARecoursePageVbox.setPadding(new Insets(15, 12, 15, 12));
+        
+        Label id = new Label("ID: "+Integer.toString(changetruck.getID()));
+        
+      
+        ComboBox trucktyp = new ComboBox();
+        trucktyp.getItems().addAll("A","AA","B","BB","C","CC","CCC","K");
+        trucktyp.getSelectionModel().select(changetruck.gettrucktyp());
+        
+        ComboBox truckstatus = new ComboBox();
+        truckstatus.getItems().addAll("Ok","Reparation","Reserv","Inaktiv");
+        truckstatus.getSelectionModel().select(changetruck.gettruckstatus());
+        
+        FadeTransition fader = createFader(alterMessage);
+                                SequentialTransition blinkThenFade = new SequentialTransition(
+                                        alterMessage,
+                                      
+                                        fader
+                                );
+        
+        Button save = new Button("Save");
+        Button back = new Button("Back");
+        back.setPrefSize(120, 20);
+        save.setPrefSize(120, 20);
+        changeARecoursePageVbox.getChildren().setAll(id, trucktyp,truckstatus,save,back);
+        
+        save.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                changetruck.settrucktyp(trucktyp.getSelectionModel().getSelectedItem().toString());
+                changetruck.setstatus(truckstatus.getSelectionModel().getSelectedItem().toString());
+                
+                m.updateTruck(changetruck);
+                trucks = m.getAllTrucks();
+                ol.clear();
+                ol.addAll(trucks);
+                listv.setItems(ol);
+                blinkThenFade.play();
+                thestage.setScene(alterAResourceScene);
+            }
+        });
+        back.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                trucks = m.getAllTrucks();
+                ol.clear();
+                ol.addAll(trucks);
+                listv.setItems(ol);
+                thestage.setScene(alterAResourceScene);
+            }
+        });
+        
+        return changeARecoursePageVbox;
+        
+    }
+        
+
+      private FadeTransition createFader(Node node) {
+        FadeTransition fade = new FadeTransition(Duration.seconds(4), node);
+        fade.setFromValue(1);
+        fade.setToValue(0);
+
+        return fade;
     }
     
 }
