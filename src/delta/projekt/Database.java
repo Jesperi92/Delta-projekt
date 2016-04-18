@@ -243,6 +243,29 @@ public class Database implements InterfaceDB{
 	System.out.println(db.executeUpdate(SQL)+
 			   " rows inserted");
     }
-  
+      
+      public List<Booking> getBookingFromDateAndSlot(int time, int slot){
+          ArrayList<Booking> list = new ArrayList<Booking>();
+	ResultSet rs = db.executeQuery("Select Ship, Dag, Slot FROM KLast WHERE Slot='"+slot+"', Dag='"+time+"'"); 
+	try{
+	    Booking m=null;
+	    while(rs.next()){
+		m=new Booking(rs.getString("Fartyg"),
+				   rs.getInt("Slot"),
+				   rs.getInt("Dag"));
+                m.setId(rs.getInt("LastID"));
+                
+		
+		list.add(m);
+	    }
+	    db.closeIt(rs);
+	    return list;
+            
+	}catch(Exception e){
+	    System.err.println("Getting all persons: " + e.getMessage());
+	    db.closeIt(rs);
+	}
+	return null;
+      }
 
 }

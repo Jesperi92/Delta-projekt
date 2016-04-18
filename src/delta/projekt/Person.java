@@ -8,6 +8,8 @@ public class Person{
     private String status;
     private String schema;
     private String wage;
+    
+    String förnamnspace, efternamnspace, körkortspace, statusspace, schemaspace; 
     public Person(String förnamn, String efternamn,
 			String körkort, String status, String schema){
                 this.efternamn = efternamn;
@@ -41,9 +43,11 @@ public class Person{
    
     @Override
     public String toString(){
-	return id +" | "+förnamn + " | " + efternamn + " | " +
-	    körkort + " | " + 
-	    status+" | "+schema+" | "+wage;
+        
+	/*return id +"\t | "+förnamn+ "\t | " + efternamn+ "\t | " +
+	    körkort+ "\t | " + 
+	    status+"\t | "+schema+"\t | "+wage;*/
+        return String.format("%02d|%-15s|%-15s|%-15s|%-15s|%-15s|%-15s", id, förnamn, efternamn, körkort, status, schema,wage);
     }
 
     public void setförnamn(String förnamn){

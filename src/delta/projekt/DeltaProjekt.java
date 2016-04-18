@@ -35,7 +35,10 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -71,7 +74,7 @@ public class DeltaProjekt extends Application {
     public void start(Stage primaryStage) {
         
         thestage = primaryStage;
-        thestage.initStyle(StageStyle.UNDECORATED);
+        //thestage.initStyle(StageStyle.UNDECORATED);
         startScene = new Scene(getStartPageBorderPane(), 500, 550);
         statisticsScene = new Scene(getStatisticsPageBorderPane(), 500, 550);
         dailyBookingScene = new Scene(getDailyBookingBorderPane(), 500, 550);
@@ -249,10 +252,21 @@ public class DeltaProjekt extends Application {
         comboBox.getSelectionModel().clearSelection();
         
         listv = new ListView();
+        TableView tablev = new TableView();
+        TableColumn id = new TableColumn("ID");
+        TableColumn förnamn = new TableColumn("Förnamn");
+        TableColumn efternamn = new TableColumn("efternamn");
+        TableColumn körkort = new TableColumn("Körkort");
+        TableColumn status = new TableColumn("Status");
+        TableColumn schema = new TableColumn("Schema");
+        id.setCellValueFactory(new PropertyValueFactory<Person,String>("förnamn"));
+        tablev.getColumns().addAll(id,förnamn,efternamn,körkort,status,schema);
+        
         
         ol = FXCollections.observableArrayList();
         listv.setItems(ol);
-        
+                
+
         vbox.getChildren().addAll(comboBox,back);
           comboBox.setOnAction(new EventHandler<ActionEvent>() {
             
@@ -270,7 +284,7 @@ public class DeltaProjekt extends Application {
                         for (Person p : persons){
                             ol.add(p);
                         }
-                        vbox.getChildren().addAll(comboBox,listv,alterMessage,change,remove,back);
+                        vbox.getChildren().addAll(comboBox,tablev,alterMessage,change,remove,back);
                         listv.setPrefHeight(ol.size() * 24 + 2);
                         listv.setPrefWidth(300);
                         
@@ -586,30 +600,51 @@ public class DeltaProjekt extends Application {
     }
       public GridPane addDailyBookingMenuBtns(){
           
-          
-          
+          Button uppdate = new Button("Uppdate");
+          DatePicker datePicker = new DatePicker();
           Label firstDock = new Label("Dock 101");
+          firstDock.setVisible(false);
           Label secondDock = new Label("Dock 201");
+          secondDock.setVisible(false);
           Label thirdDock = new Label("Dock 301");
-          
+                    thirdDock.setVisible(false);
+
           Button firstDock0816 = new Button("08-16");
           firstDock0816.setPrefSize(60, 50);
+                    firstDock0816.setVisible(false);
+
           Button firstDock1600 = new Button("16-00");
           firstDock1600.setPrefSize(60, 50);
+                    firstDock1600.setVisible(false);
+
           Button firstDock0008 = new Button("00-08");
           firstDock0008.setPrefSize(60, 50);
+                    firstDock0008.setVisible(false);
+
           Button secondDock0816 = new Button("08-16");
           secondDock0816.setPrefSize(60, 50);
+                    secondDock0816.setVisible(false);
+
           Button secondDock1600 = new Button("16-00");
           secondDock1600.setPrefSize(60, 50);
+                    secondDock1600.setVisible(false);
+
           Button secondDock0008 = new Button("00-08");
           secondDock0008.setPrefSize(60, 50);
+                    secondDock0008.setVisible(false);
+
           Button thirdDock0816 = new Button("08-16");
           thirdDock0816.setPrefSize(60, 50);
+                    thirdDock0816.setVisible(false);
+
           Button thirdDock1600 = new Button("16-00");
           thirdDock1600.setPrefSize(60, 50);
+                    thirdDock1600.setVisible(false);
+
           Button thirdDock0008 = new Button("00-08");
           thirdDock0008.setPrefSize(60, 50);
+                    thirdDock0008.setVisible(false);
+
           GridPane gridpane = new GridPane();
           gridpane.setAlignment(Pos.CENTER);
           
@@ -621,50 +656,68 @@ public class DeltaProjekt extends Application {
     column2.setHgrow(Priority.ALWAYS);
     gridpane.getColumnConstraints().addAll(column1, column2);
 
+    GridPane.setHalignment(datePicker, HPos.CENTER);
+    gridpane.add(datePicker, 1, 0);
+    GridPane.setHalignment(uppdate, HPos.CENTER);
+    gridpane.add(uppdate, 1, 1);
     // First name label
     GridPane.setHalignment(firstDock, HPos.CENTER);
-    gridpane.add(firstDock, 1, 0);
+    gridpane.add(firstDock, 1, 2);
 
     // Last name label
     GridPane.setHalignment(firstDock0008, HPos.CENTER);
-    gridpane.add(firstDock0008, 0, 1);
+    gridpane.add(firstDock0008, 0, 3);
 
     // First name field
     GridPane.setHalignment(firstDock0816, HPos.CENTER);
-    gridpane.add(firstDock0816, 1, 1);
+    gridpane.add(firstDock0816, 1, 3);
 
     // Last name field
     GridPane.setHalignment(firstDock1600, HPos.CENTER);
-    gridpane.add(firstDock1600, 2, 1);
+    gridpane.add(firstDock1600, 2, 3);
 
     // Save button
     GridPane.setHalignment(secondDock, HPos.CENTER);
-    gridpane.add(secondDock, 1, 2);
+    gridpane.add(secondDock, 1, 4);
     
     GridPane.setHalignment(secondDock0008, HPos.CENTER);
-    gridpane.add(secondDock0008, 0, 3);
-    
-    GridPane.setHalignment(secondDock1600, HPos.CENTER);
-    gridpane.add(secondDock1600, 1, 3);
+    gridpane.add(secondDock0008, 0, 5);
     
     GridPane.setHalignment(secondDock0816, HPos.CENTER);
-    gridpane.add(secondDock0816, 2, 3);
+    gridpane.add(secondDock0816, 1, 5);
+    
+    GridPane.setHalignment(secondDock1600, HPos.CENTER);
+    gridpane.add(secondDock1600, 2, 5);
     
     GridPane.setHalignment(thirdDock, HPos.CENTER);
-    gridpane.add(thirdDock, 1, 4);
+    gridpane.add(thirdDock, 1, 6);
     
     GridPane.setHalignment(thirdDock0008, HPos.CENTER);
-    gridpane.add(thirdDock0008, 0, 5);
+    gridpane.add(thirdDock0008, 0, 7);
     
     GridPane.setHalignment(thirdDock0816, HPos.CENTER);
-    gridpane.add(thirdDock0816, 1, 5);
+    gridpane.add(thirdDock0816, 1, 7);
     
     GridPane.setHalignment(thirdDock1600, HPos.CENTER);
-    gridpane.add(thirdDock1600, 2, 5);
+    gridpane.add(thirdDock1600, 2, 7);
           
-    firstDock0008.setOnAction(new EventHandler<ActionEvent>() {
+    uppdate.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                firstDock0008.setVisible(true);
+                firstDock0816.setVisible(true);
+                firstDock1600.setVisible(true);
+                secondDock0008.setVisible(true);
+                secondDock0816.setVisible(true);
+                secondDock1600.setVisible(true);
+                thirdDock0008.setVisible(true);
+                thirdDock0816.setVisible(true);
+                thirdDock1600.setVisible(true);
+                thirdDock.setVisible(true);
+                secondDock.setVisible(true);
+                firstDock.setVisible(true);
+                
+                
                 
 
             }
