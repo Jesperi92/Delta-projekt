@@ -1,19 +1,22 @@
 package delta.projekt;
 
+import static com.sun.org.apache.xalan.internal.lib.ExsltDatetime.date;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 public class Booking{
     private int id;
     private String ship;
     private int slot;
-    private int date;
+    Date date;
     private List<Truck> truckid;
     private List<Person> personid;
    
     public Booking(String ship, int slot,
-			int date){
+			Timestamp timestamp){
         this.slot=slot;
-        this.date=date;
+        this.date=new java.util.Date(timestamp.getTime());
         this.ship=ship;
         
     }
@@ -42,11 +45,11 @@ public class Booking{
         this.slot = slot;
     }
 
-    public int getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(int date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

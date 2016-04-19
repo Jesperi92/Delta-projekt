@@ -3,6 +3,8 @@ import java.util.*;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -178,8 +180,8 @@ public class Database implements InterfaceDB{
     public void removeShip(Ship ship){
 	int id = ship.getID();
         
-	String SQL="DELETE FROM Ship"+
-	    " WHERE ShipID="+id;
+	String SQL="DELETE FROM Boats"+
+	    " WHERE BoatID="+id;
 	System.out.println(db.executeUpdate(SQL) +
 			   " rows deleted");
 	
@@ -244,7 +246,7 @@ public class Database implements InterfaceDB{
 			   " rows inserted");
     }
       
-      public List<Booking> getBookingFromDateAndSlot(int time, int slot){
+      public List<Booking> getBookingFromDateAndSlot(String time, int slot){
           ArrayList<Booking> list = new ArrayList<Booking>();
 	ResultSet rs = db.executeQuery("Select Ship, Dag, Slot FROM KLast WHERE Slot='"+slot+"', Dag='"+time+"'"); 
 	try{
@@ -252,7 +254,7 @@ public class Database implements InterfaceDB{
 	    while(rs.next()){
 		m=new Booking(rs.getString("Fartyg"),
 				   rs.getInt("Slot"),
-				   rs.getInt("Dag"));
+				   rs.getTimestamp("Dag"));
                 m.setId(rs.getInt("LastID"));
                 
 		

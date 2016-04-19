@@ -8,7 +8,7 @@
      -fx-background-image: url("grey-background-for-site11.jpg");
      -fx-font-family: "Helvetica";
 }
-Button  {
+.button  {
     -fx-font-family: "Helvetica";
     
     -fx-background-color: 
@@ -56,5 +56,9 @@ Label {
 TextField{
     -fx-font-family: "Helvetica";
 }
-
-
+.button:pressed{
+    -fx-background-color: rgba(180,180,180,0.7);
+}
+.action{
+    -fx-background-color: red;
+}

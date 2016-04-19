@@ -7,6 +7,7 @@ package delta.projekt;
 
 import java.awt.Font;
 import java.io.File;
+import java.time.LocalTime;
 import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,6 +25,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.event.WeakEventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -50,7 +52,7 @@ import javafx.stage.StageStyle;
 
 public class DeltaProjekt extends Application {
     Stage thestage;
-    Scene startScene, statisticsScene,dailyBookingScene,alterResourcersScene, addResourceScene, alterAResourceScene,changeARecourceScene;
+    Scene startScene, statisticsScene,dailyBookingScene,alterResourcersScene, addResourceScene, alterAResourceScene,changeARecourceScene, abookingscene;
     Database m = new Database();
     
     List<Person> persons;
@@ -60,12 +62,13 @@ public class DeltaProjekt extends Application {
     Person changeperson;
     Truck changetruck;
     Ship changeship;
-    ObservableList ol;
-    ListView listv;
+    ObservableList oll;
     
+    TableView tablev;
     Label alterMessage;
     File f;
-    
+    String bookingdate, bookingtime, bookingharbor;
+    int bookingslot;
      public static void main(String[] args) {
         launch(args);
     }
@@ -81,7 +84,8 @@ public class DeltaProjekt extends Application {
         alterResourcersScene = new Scene(getAlterResourcesPageBorderPane(), 500, 550);
         addResourceScene = new Scene(getAddRecourseBorderPane(), 500, 550);
         alterAResourceScene = new Scene(getAlterAResourceBorderPane(), 500, 550);
-        
+        abookingscene = new Scene(tablev);
+                
         f = new File("newfile.css");
         startScene.getStylesheets().clear();
         startScene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
@@ -95,12 +99,20 @@ public class DeltaProjekt extends Application {
         addResourceScene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
         alterAResourceScene.getStylesheets().clear();
         alterAResourceScene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
-       
+        abookingscene.getStylesheets().clear();
+        abookingscene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
+        
         primaryStage.setTitle("Botes!");
         primaryStage.setScene(startScene);
         primaryStage.show();
         
     }
+    public BorderPane getABookingSceneBorderPane(){
+        BorderPane abookingsceneBorderPane = new BorderPane();
+        abookingsceneBorderPane.setCenter(addABookingSceneMenuBtns());
+        return abookingsceneBorderPane;
+    }
+    
     public BorderPane getChangeAPersonSceneBorderPane(){
         BorderPane changeAPersonSceneBorderPane = new BorderPane();
         changeAPersonSceneBorderPane.setCenter(addChangeAPersonMenuBtns());
@@ -222,7 +234,7 @@ public class DeltaProjekt extends Application {
        
         VBox vbox = new VBox(20);
         vbox.setAlignment(Pos.TOP_CENTER);
-        vbox.setMaxWidth(300);
+        vbox.setMaxWidth(450);
         vbox.setPadding(new Insets(15, 12, 15, 12));
         
         alterMessage = new Label();
@@ -251,22 +263,65 @@ public class DeltaProjekt extends Application {
         );
         comboBox.getSelectionModel().clearSelection();
         
-        listv = new ListView();
-        TableView tablev = new TableView();
+        tablev = new TableView();
         TableColumn id = new TableColumn("ID");
+        id.setCellValueFactory(
+                new PropertyValueFactory<>("id"));
         TableColumn förnamn = new TableColumn("Förnamn");
+        förnamn.setCellValueFactory(
+                new PropertyValueFactory<>("förnamn"));
         TableColumn efternamn = new TableColumn("efternamn");
+        efternamn.setCellValueFactory(
+                new PropertyValueFactory<>("efternamn"));
         TableColumn körkort = new TableColumn("Körkort");
+        körkort.setCellValueFactory(
+                new PropertyValueFactory<>("körkort"));
         TableColumn status = new TableColumn("Status");
+        status.setCellValueFactory(
+                new PropertyValueFactory<>("status"));
         TableColumn schema = new TableColumn("Schema");
-        id.setCellValueFactory(new PropertyValueFactory<Person,String>("förnamn"));
-        tablev.getColumns().addAll(id,förnamn,efternamn,körkort,status,schema);
+        schema.setCellValueFactory(
+                new PropertyValueFactory<>("schema"));
+        TableColumn wage = new TableColumn("Lön");
+        wage.setCellValueFactory(
+                new PropertyValueFactory<>("wage"));
+        
+        TableColumn trucktype = new TableColumn("TruckType");
+        trucktype.setCellValueFactory(
+                new PropertyValueFactory<>("trucktyp"));
+        
+        TableColumn truckstatus = new TableColumn("Status");
+        truckstatus.setCellValueFactory(
+                new PropertyValueFactory<>("status"));
+        
+        TableColumn truckid = new TableColumn("ID");
+        truckid.setCellValueFactory(
+                new PropertyValueFactory<>("id"));
+        
+        TableColumn fee = new TableColumn("Fee");
+        fee.setCellValueFactory(
+                new PropertyValueFactory<>("fee"));
+        
+        TableColumn shipid = new TableColumn("ID");
+        shipid.setCellValueFactory(
+                new PropertyValueFactory<>("shipid"));
+        
+        TableColumn shipname = new TableColumn("Ship Name");
+        shipname.setCellValueFactory(
+                new PropertyValueFactory<>("namn"));
+        
+        TableColumn shipowner = new TableColumn("Owner");
+        shipowner.setCellValueFactory(
+                new PropertyValueFactory<>("bolag"));
+        
+        TableColumn shipvolymid = new TableColumn("VolymID");
+        shipvolymid.setCellValueFactory(
+                new PropertyValueFactory<>("volymid"));
         
         
-        ol = FXCollections.observableArrayList();
-        listv.setItems(ol);
-                
-
+        oll = FXCollections.observableArrayList();
+        
+      
         vbox.getChildren().addAll(comboBox,back);
           comboBox.setOnAction(new EventHandler<ActionEvent>() {
             
@@ -276,46 +331,52 @@ public class DeltaProjekt extends Application {
                     
                 switch (comboBox.getSelectionModel().getSelectedItem().toString()) {
                     case "Person":
-                        
+                        tablev.getColumns().clear();
                         vbox.getChildren().clear();
-                        ol.clear();
+                        tablev.getColumns().addAll(id,förnamn,efternamn,körkort,status,schema,wage);
+                        oll.clear();
                         persons = m.getAllPersons();
-                        
+ 
                         for (Person p : persons){
-                            ol.add(p);
+                            
+                            oll.add(new ListPerson(p));
+                            
                         }
+                        tablev.setItems(oll);
                         vbox.getChildren().addAll(comboBox,tablev,alterMessage,change,remove,back);
-                        listv.setPrefHeight(ol.size() * 24 + 2);
-                        listv.setPrefWidth(300);
+                        
                         
                         break;
                     case "Truck":
-                        
+                        tablev.getColumns().clear();
                         vbox.getChildren().clear();
-                        ol.clear();
+                        
+                        tablev.getColumns().addAll(truckid,trucktype,truckstatus,fee);
+                        oll.clear();
                         trucks = m.getAllTrucks();
                        
                         for (Truck t : trucks){
-                            ol.add(t);
+                            oll.add(new ListTruck(t));
                         }
+                       tablev.setItems(oll);
+                        vbox.getChildren().addAll(comboBox,tablev,alterMessage,change,remove,back);
                         
-                        vbox.getChildren().addAll(comboBox,listv,alterMessage,change,remove,back);
-                        listv.setPrefHeight(ol.size() * 24 + 2);
-                        listv.setPrefWidth(150);
                         break;
                     case "Ship":
-                        
+                        tablev.getColumns().clear();
                         vbox.getChildren().clear();
-                        ol.clear();
+                        
+                        tablev.getColumns().addAll(shipid,shipname,shipowner,shipvolymid);
+                        oll.clear();
                         ships = m.getAllShip();
                        
                         for (Ship s : ships){
-                            ol.add(s);
+                            oll.add(new ListShip(s));
                         }
                         
-                        vbox.getChildren().addAll(comboBox,listv,alterMessage,change,remove,back);
-                        listv.setPrefHeight(ol.size() * 24 + 2);
-                        listv.setPrefWidth(200);
+                        tablev.setItems(oll);
+                        vbox.getChildren().addAll(comboBox,tablev,alterMessage,change,remove,back);
+                        
                         break;
                     default:
                         break;
@@ -326,53 +387,66 @@ public class DeltaProjekt extends Application {
           remove.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if(!(listv.getSelectionModel().getSelectedIndex() == -1)){
+                //if(!(listv.getSelectionModel().getSelectedIndex() == -1)){
                  switch (comboBox.getSelectionModel().getSelectedItem().toString()) {
                     case "Person":
-                        m.removePerson(persons.get(listv.getSelectionModel().getSelectedIndex()));
+                        
+                        m.removePerson(persons.get(tablev.getSelectionModel().getSelectedIndex()));
                         alterMessage.setText("Removed");
                         alterMessage.setVisible(true);
                                 blinkThenFade.play();
                         persons = m.getAllPersons();
-                        ol.clear();
-                        ol.addAll(persons);
-                        listv.setItems(ol);
+                        oll.clear();
+                        for (Person p : persons){
+
+                            oll.add(new ListPerson(p));
+                            
+                        }
+                        tablev.setItems(oll);
                         break;
+                        
                     case "Truck":
-                        m.removeTruck(trucks.get(listv.getSelectionModel().getSelectedIndex()));
+                        m.removeTruck(trucks.get(tablev.getSelectionModel().getSelectedIndex()));
                         alterMessage.setText("Removed");
                         alterMessage.setVisible(true);
                                 blinkThenFade.play();
                         trucks = m.getAllTrucks();
-                        ol.clear();
-                        ol.addAll(trucks);
-                        listv.setItems(ol);
+                        oll.clear();
+                         for (Truck t : trucks){
+                            
+                            oll.add(new ListTruck(t));
+                            
+                        }
+                        tablev.setItems(oll);
                         
                         break;
                     case "Ship":
-                        m.removeShip(ships.get(listv.getSelectionModel().getSelectedIndex()));
+                        m.removeShip(ships.get(tablev.getSelectionModel().getSelectedIndex()));
                         alterMessage.setText("Removed");
                         alterMessage.setVisible(true);
                                 blinkThenFade.play();
                         ships = m.getAllShip();
-                        ol.clear();
-                        ol.addAll(ships);
-                        listv.setItems(ol);
+                        oll.clear();
+                        for (Ship s : ships){
+                            oll.add(new ListShip(s));
+                        }
+                        tablev.setItems(oll);
+                        
                         break;
                     default:
                         break;
                 }
                 }
-            }
+           // }
         });
           change.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if(!(listv.getSelectionModel().getSelectedIndex() == -1)){
+                //if(!(listv.getSelectionModel().getSelectedIndex() == -1)){
                  switch (comboBox.getSelectionModel().getSelectedItem().toString()) {
                     case "Person":
                         alterMessage.setText("Uppdated");
-                        changeperson = persons.get(listv.getSelectionModel().getSelectedIndex());
+                        changeperson = persons.get(tablev.getSelectionModel().getSelectedIndex());
                         changeARecourceScene = new Scene(getChangeAPersonSceneBorderPane(),500,550);
                         changeARecourceScene.getStylesheets().clear();
                         changeARecourceScene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
@@ -380,7 +454,7 @@ public class DeltaProjekt extends Application {
                         break;
                     case "Truck":
                         alterMessage.setText("Uppdated");
-                        changetruck = trucks.get(listv.getSelectionModel().getSelectedIndex());
+                        changetruck = trucks.get(tablev.getSelectionModel().getSelectedIndex());
                         changeARecourceScene = new Scene(getChangeATruckSceneBorderPane(),500,550);
                         changeARecourceScene.getStylesheets().clear();
                         changeARecourceScene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
@@ -388,7 +462,7 @@ public class DeltaProjekt extends Application {
                         break;
                     case "Ship":
                         alterMessage.setText("Uppdated");
-                        changeship = ships.get(listv.getSelectionModel().getSelectedIndex());
+                        changeship = ships.get(tablev.getSelectionModel().getSelectedIndex());
                         changeARecourceScene = new Scene(getChangeAShipSceneBorderPane(),500,550);
                         changeARecourceScene.getStylesheets().clear();
                         changeARecourceScene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
@@ -398,7 +472,7 @@ public class DeltaProjekt extends Application {
                         break;
                 }
                 }
-            }
+           // }
         });
           back.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -716,11 +790,176 @@ public class DeltaProjekt extends Application {
                 thirdDock.setVisible(true);
                 secondDock.setVisible(true);
                 firstDock.setVisible(true);
-                
-                
-                
+              
+               bookingdate = datePicker.getValue().toString();
+               
+               
+                if(!(m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 1).equals(null))){
+                    firstDock0008.getStyleClass().add("action");
+                }
+                else{
+                    firstDock0008.getStyleClass().remove("action");
+                }
+                if(!(m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 2).equals(null))){
+                    firstDock0816.getStyleClass().add("action");
+                }
+                else{
+                    firstDock0816.getStyleClass().remove("action");
+                }
+                if(!(m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 3).equals(null))){
+                    firstDock1600.getStyleClass().add("action");
+                }
+                else{
+                    firstDock1600.getStyleClass().remove("action");
+                }
+                if(!(m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 4).equals(null))){
+                    secondDock0008.getStyleClass().add("action");
+                }
+                else{
+                    
+                }
+                if(!(m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 5).equals(null))){
+                    secondDock0816.getStyleClass().add("action");
+                }
+                else{
+                    secondDock0008.getStyleClass().remove("action");
+                }
+                if(!(m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 6).equals(null))){
+                    secondDock1600.getStyleClass().add("action");
+                }
+                else{
+                    secondDock1600.getStyleClass().remove("action");
+                }
+                if(!(m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 7).equals(null))){
+                    thirdDock0008.getStyleClass().add("action");
+                }
+                else{
+                    thirdDock0008.getStyleClass().remove("action");
+                }
+                if(!(m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 8).equals(null))){
+                    thirdDock0816.getStyleClass().add("action");
+                }
+                else{
+                    thirdDock0816.getStyleClass().remove("action");
+                }
+                if(!(m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 9).equals(null))){
+                    thirdDock1600.getStyleClass().add("action");
+                }
+                else{
+                    thirdDock1600.getStyleClass().remove("action");
+                }
 
             }
+        });
+    
+        firstDock0008.setOnAction(new EventHandler<ActionEvent>(){
+              @Override
+              public void handle(ActionEvent event) {
+                 if((m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 1).equals(null))){
+                   bookingslot = 1;
+                   bookingtime= "00-08";
+                   bookingharbor ="101";
+                   thestage.setScene(abookingscene);
+                }
+              }
+            
+        });
+        firstDock0816.setOnAction(new EventHandler<ActionEvent>(){
+              @Override
+              public void handle(ActionEvent event) {
+                 if((m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 2).equals(null))){
+                    bookingslot=2;
+                    bookingtime="08-16";
+                    bookingharbor ="101";
+                    thestage.setScene(abookingscene);
+                }
+              }
+            
+        });
+        firstDock1600.setOnAction(new EventHandler<ActionEvent>(){
+              @Override
+              public void handle(ActionEvent event) {
+                 if((m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 3).equals(null))){
+                    bookingslot=3;
+                    bookingtime="16-00";
+                    bookingharbor ="101";
+                    thestage.setScene(abookingscene);
+                }
+              }
+            
+        });
+        secondDock0008.setOnAction(new EventHandler<ActionEvent>(){
+              @Override
+              public void handle(ActionEvent event) {
+                 if((m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 4).equals(null))){
+                    bookingslot=4;
+                    bookingtime= "00-08";
+                    bookingharbor="201";
+                    thestage.setScene(abookingscene);
+                    
+                }
+              }
+            
+        });
+        secondDock0816.setOnAction(new EventHandler<ActionEvent>(){
+              @Override
+              public void handle(ActionEvent event) {
+                 if((m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 5).equals(null))){
+                    bookingslot=5;
+                    bookingtime="08-16";
+                    bookingharbor="201";
+                    thestage.setScene(abookingscene);
+                }
+              }
+            
+        });
+        secondDock1600.setOnAction(new EventHandler<ActionEvent>(){
+              @Override
+              public void handle(ActionEvent event) {
+                 if((m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 6).equals(null))){
+                    bookingslot=6;
+                    bookingtime="16-00";
+                    bookingharbor="201";
+                    thestage.setScene(abookingscene);
+                }
+              }
+            
+        });
+        thirdDock0008.setOnAction(new EventHandler<ActionEvent>(){
+              @Override
+              public void handle(ActionEvent event) {
+                 if((m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 7).equals(null))){
+                    bookingslot=7;
+                    bookingtime= "00-08";
+                    bookingharbor="301";
+                    thestage.setScene(abookingscene);
+                }
+              }
+            
+        });
+        thirdDock0816.setOnAction(new EventHandler<ActionEvent>(){
+              @Override
+              public void handle(ActionEvent event) {
+                 if((m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 8).equals(null))){
+                    bookingslot=8;
+                    bookingtime="08-16";
+                    bookingharbor="301";
+                    thestage.setScene(abookingscene);
+                }
+              }
+            
+        });
+        thirdDock1600.setOnAction(new EventHandler<ActionEvent>(){
+              @Override
+              public void handle(ActionEvent event) {
+                 if((m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 9).equals(null))){
+                    bookingslot=9;
+                    bookingtime="16-00";
+                    bookingharbor="301";
+                    thestage.setScene(abookingscene);
+                }
+              }
+            
         });
            return gridpane;
       }
@@ -771,9 +1010,15 @@ public class DeltaProjekt extends Application {
                 changeperson.setschema(pschedual.getSelectionModel().getSelectedItem().toString());
                 m.updatePerson(changeperson);
                 persons = m.getAllPersons();
-                ol.clear();
-                ol.addAll(persons);
-                listv.setItems(ol);
+                
+                oll.clear();
+                 for (Person p : persons){
+                            
+                            oll.add(new ListPerson(p));
+                            
+                        }
+                
+                tablev.setItems(oll);
                 blinkThenFade.play();
                 thestage.setScene(alterAResourceScene);
             }
@@ -782,9 +1027,13 @@ public class DeltaProjekt extends Application {
             @Override
             public void handle(ActionEvent event) {
                 persons = m.getAllPersons();
-                ol.clear();
-                ol.addAll(persons);
-                listv.setItems(ol);
+                oll.clear();
+                for (Person p : persons){
+                            
+                            oll.add(new ListPerson(p));
+                            
+                        }
+                tablev.setItems(oll);
                 thestage.setScene(alterAResourceScene);
             }
         });
@@ -836,9 +1085,11 @@ public class DeltaProjekt extends Application {
                 
                 m.updateShip(changeship);
                 ships = m.getAllShip();
-                ol.clear();
-                ol.addAll(ships);
-                listv.setItems(ol);
+                oll.clear();
+                for (Ship s : ships){
+                            oll.add(new ListShip(s));
+                        }
+                tablev.setItems(oll);
                 blinkThenFade.play();
                 thestage.setScene(alterAResourceScene);
             }
@@ -847,9 +1098,11 @@ public class DeltaProjekt extends Application {
             @Override
             public void handle(ActionEvent event) {
                 ships = m.getAllShip();
-                ol.clear();
-                ol.addAll(ships);
-                listv.setItems(ol);
+                oll.clear();
+                for (Ship s : ships){
+                            oll.add(new ListShip(s));
+                        }
+                tablev.setItems(oll);
                 thestage.setScene(alterAResourceScene);
             }
         });
@@ -896,9 +1149,13 @@ public class DeltaProjekt extends Application {
                 
                 m.updateTruck(changetruck);
                 trucks = m.getAllTrucks();
-                ol.clear();
-                ol.addAll(trucks);
-                listv.setItems(ol);
+                oll.clear();
+                for (Truck t : trucks){
+                            
+                            oll.add(new ListTruck(t));
+                            
+                        }
+                tablev.setItems(oll);
                 blinkThenFade.play();
                 thestage.setScene(alterAResourceScene);
             }
@@ -907,9 +1164,13 @@ public class DeltaProjekt extends Application {
             @Override
             public void handle(ActionEvent event) {
                 trucks = m.getAllTrucks();
-                ol.clear();
-                ol.addAll(trucks);
-                listv.setItems(ol);
+                oll.clear();
+                oll.addAll(trucks);
+                for (Truck t : trucks){
+                            
+                            oll.add(new ListTruck(t));
+                            
+                        }
                 thestage.setScene(alterAResourceScene);
             }
         });
@@ -917,7 +1178,10 @@ public class DeltaProjekt extends Application {
         return changeARecoursePageVbox;
         
     }
-        
+      public VBox addABookingSceneMenuBtns(){
+         
+          return null;
+      }
 
       private FadeTransition createFader(Node node) {
         FadeTransition fade = new FadeTransition(Duration.seconds(4), node);

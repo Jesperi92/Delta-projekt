@@ -47,7 +47,7 @@ public class Person{
 	/*return id +"\t | "+förnamn+ "\t | " + efternamn+ "\t | " +
 	    körkort+ "\t | " + 
 	    status+"\t | "+schema+"\t | "+wage;*/
-        return String.format("%02d|%-15s|%-15s|%-15s|%-15s|%-15s|%-15s", id, förnamn, efternamn, körkort, status, schema,wage);
+        return String.format("%02d|%-8s|%-8s|%-3s|%-4s|%-3s|%-4s", id, förnamn, efternamn, körkort, status, schema,wage);
     }
 
     public void setförnamn(String förnamn){
