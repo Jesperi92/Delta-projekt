@@ -15,4 +15,6 @@ public interface InterfaceDB{
     public void updatePerson(Person p);
     public void updateShip(Ship p);
     public void updateTruck(Truck p);
+    public int getBookingCountFromDateAndSlot(String time, int slot);
+    public List<Integer>getShipIDFromBooking(String date);
 }

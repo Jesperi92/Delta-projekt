@@ -65,7 +65,7 @@ public class DeltaProjekt extends Application {
     ObservableList oll;
     
     TableView tablev;
-    Label alterMessage;
+    Label alterMessage,date,time;
     File f;
     String bookingdate, bookingtime, bookingharbor;
     int bookingslot;
@@ -78,13 +78,13 @@ public class DeltaProjekt extends Application {
         
         thestage = primaryStage;
         //thestage.initStyle(StageStyle.UNDECORATED);
-        startScene = new Scene(getStartPageBorderPane(), 500, 550);
-        statisticsScene = new Scene(getStatisticsPageBorderPane(), 500, 550);
-        dailyBookingScene = new Scene(getDailyBookingBorderPane(), 500, 550);
-        alterResourcersScene = new Scene(getAlterResourcesPageBorderPane(), 500, 550);
+        startScene = new Scene(getStartPageBorderPane(), 500, 600);
+        statisticsScene = new Scene(getStatisticsPageBorderPane(), 500, 600);
+        dailyBookingScene = new Scene(getDailyBookingBorderPane(), 500, 600);
+        alterResourcersScene = new Scene(getAlterResourcesPageBorderPane(), 500, 600);
         addResourceScene = new Scene(getAddRecourseBorderPane(), 500, 550);
-        alterAResourceScene = new Scene(getAlterAResourceBorderPane(), 500, 550);
-        abookingscene = new Scene(tablev);
+        alterAResourceScene = new Scene(getAlterAResourceBorderPane(), 500, 600);
+        abookingscene = new Scene(getABookingSceneBorderPane(),500,600 );
                 
         f = new File("newfile.css");
         startScene.getStylesheets().clear();
@@ -270,7 +270,7 @@ public class DeltaProjekt extends Application {
         TableColumn förnamn = new TableColumn("Förnamn");
         förnamn.setCellValueFactory(
                 new PropertyValueFactory<>("förnamn"));
-        TableColumn efternamn = new TableColumn("efternamn");
+        TableColumn efternamn = new TableColumn("Efternamn");
         efternamn.setCellValueFactory(
                 new PropertyValueFactory<>("efternamn"));
         TableColumn körkort = new TableColumn("Körkort");
@@ -615,6 +615,7 @@ public class DeltaProjekt extends Application {
             public void handle(ActionEvent event) {
                 vbox.getChildren().clear();
                 vbox.getChildren().addAll(comboBox,back);
+                
                 thestage.setScene(alterResourcersScene);
             }
         });
@@ -794,55 +795,55 @@ public class DeltaProjekt extends Application {
                bookingdate = datePicker.getValue().toString();
                
                
-                if(!(m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 1).equals(null))){
+                if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 1) == 1){
                     firstDock0008.getStyleClass().add("action");
                 }
                 else{
                     firstDock0008.getStyleClass().remove("action");
                 }
-                if(!(m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 2).equals(null))){
+                if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 2) == 1){
                     firstDock0816.getStyleClass().add("action");
                 }
                 else{
                     firstDock0816.getStyleClass().remove("action");
                 }
-                if(!(m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 3).equals(null))){
+                if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 3) == 1){
                     firstDock1600.getStyleClass().add("action");
                 }
                 else{
                     firstDock1600.getStyleClass().remove("action");
                 }
-                if(!(m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 4).equals(null))){
+                if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 4) == 1){
                     secondDock0008.getStyleClass().add("action");
                 }
                 else{
                     
                 }
-                if(!(m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 5).equals(null))){
+                if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 5) == 1){
                     secondDock0816.getStyleClass().add("action");
                 }
                 else{
                     secondDock0008.getStyleClass().remove("action");
                 }
-                if(!(m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 6).equals(null))){
+                if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 6)==1){
                     secondDock1600.getStyleClass().add("action");
                 }
                 else{
                     secondDock1600.getStyleClass().remove("action");
                 }
-                if(!(m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 7).equals(null))){
+                if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 7) == 1){
                     thirdDock0008.getStyleClass().add("action");
                 }
                 else{
                     thirdDock0008.getStyleClass().remove("action");
                 }
-                if(!(m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 8).equals(null))){
+                if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 8) == 1){
                     thirdDock0816.getStyleClass().add("action");
                 }
                 else{
                     thirdDock0816.getStyleClass().remove("action");
                 }
-                if(!(m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 9).equals(null))){
+                if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 9) == 1){
                     thirdDock1600.getStyleClass().add("action");
                 }
                 else{
@@ -855,10 +856,11 @@ public class DeltaProjekt extends Application {
         firstDock0008.setOnAction(new EventHandler<ActionEvent>(){
               @Override
               public void handle(ActionEvent event) {
-                 if((m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 1).equals(null))){
+                 if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 1) == 0){
                    bookingslot = 1;
-                   bookingtime= "00-08";
+                   time.setText("00-08");
                    bookingharbor ="101";
+                   date.setText(datePicker.getValue().toString());
                    thestage.setScene(abookingscene);
                 }
               }
@@ -867,10 +869,11 @@ public class DeltaProjekt extends Application {
         firstDock0816.setOnAction(new EventHandler<ActionEvent>(){
               @Override
               public void handle(ActionEvent event) {
-                 if((m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 2).equals(null))){
+                 if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 2) == 0){
                     bookingslot=2;
-                    bookingtime="08-16";
+                    time.setText("08-16");
                     bookingharbor ="101";
+                    date.setText(datePicker.getValue().toString());
                     thestage.setScene(abookingscene);
                 }
               }
@@ -879,10 +882,11 @@ public class DeltaProjekt extends Application {
         firstDock1600.setOnAction(new EventHandler<ActionEvent>(){
               @Override
               public void handle(ActionEvent event) {
-                 if((m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 3).equals(null))){
+                 if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 3) == 0){
                     bookingslot=3;
-                    bookingtime="16-00";
+                    time.setText("16-00");
                     bookingharbor ="101";
+                    date.setText(datePicker.getValue().toString());
                     thestage.setScene(abookingscene);
                 }
               }
@@ -891,10 +895,11 @@ public class DeltaProjekt extends Application {
         secondDock0008.setOnAction(new EventHandler<ActionEvent>(){
               @Override
               public void handle(ActionEvent event) {
-                 if((m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 4).equals(null))){
+                 if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 4) == 0){
                     bookingslot=4;
-                    bookingtime= "00-08";
+                    time.setText("00-08");
                     bookingharbor="201";
+                    date.setText(datePicker.getValue().toString());
                     thestage.setScene(abookingscene);
                     
                 }
@@ -904,10 +909,11 @@ public class DeltaProjekt extends Application {
         secondDock0816.setOnAction(new EventHandler<ActionEvent>(){
               @Override
               public void handle(ActionEvent event) {
-                 if((m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 5).equals(null))){
+                 if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 5) == 0){
                     bookingslot=5;
-                    bookingtime="08-16";
+                    time.setText("08-16");
                     bookingharbor="201";
+                    date.setText(datePicker.getValue().toString());
                     thestage.setScene(abookingscene);
                 }
               }
@@ -916,10 +922,11 @@ public class DeltaProjekt extends Application {
         secondDock1600.setOnAction(new EventHandler<ActionEvent>(){
               @Override
               public void handle(ActionEvent event) {
-                 if((m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 6).equals(null))){
+                 if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 6) == 0){
                     bookingslot=6;
-                    bookingtime="16-00";
+                    time.setText("16-00");
                     bookingharbor="201";
+                    date.setText(datePicker.getValue().toString());
                     thestage.setScene(abookingscene);
                 }
               }
@@ -928,10 +935,11 @@ public class DeltaProjekt extends Application {
         thirdDock0008.setOnAction(new EventHandler<ActionEvent>(){
               @Override
               public void handle(ActionEvent event) {
-                 if((m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 7).equals(null))){
+                 if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 7) == 0){
                     bookingslot=7;
-                    bookingtime= "00-08";
+                    time.setText("00-08");
                     bookingharbor="301";
+                    date.setText(datePicker.getValue().toString());
                     thestage.setScene(abookingscene);
                 }
               }
@@ -940,10 +948,11 @@ public class DeltaProjekt extends Application {
         thirdDock0816.setOnAction(new EventHandler<ActionEvent>(){
               @Override
               public void handle(ActionEvent event) {
-                 if((m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 8).equals(null))){
+                 if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 8) == 0){
                     bookingslot=8;
-                    bookingtime="08-16";
+                    time.setText("08-16");
                     bookingharbor="301";
+                    date.setText(datePicker.getValue().toString());
                     thestage.setScene(abookingscene);
                 }
               }
@@ -952,10 +961,11 @@ public class DeltaProjekt extends Application {
         thirdDock1600.setOnAction(new EventHandler<ActionEvent>(){
               @Override
               public void handle(ActionEvent event) {
-                 if((m.getBookingFromDateAndSlot(datePicker.getValue().toString(), 9).equals(null))){
+                 if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 9) == 0){
                     bookingslot=9;
-                    bookingtime="16-00";
+                    time.setText("16-00");
                     bookingharbor="301";
+                    date.setText(datePicker.getValue().toString());
                     thestage.setScene(abookingscene);
                 }
               }
@@ -1165,12 +1175,13 @@ public class DeltaProjekt extends Application {
             public void handle(ActionEvent event) {
                 trucks = m.getAllTrucks();
                 oll.clear();
-                oll.addAll(trucks);
+                
                 for (Truck t : trucks){
                             
                             oll.add(new ListTruck(t));
                             
                         }
+                tablev.setItems(oll);
                 thestage.setScene(alterAResourceScene);
             }
         });
@@ -1179,10 +1190,55 @@ public class DeltaProjekt extends Application {
         
     }
       public VBox addABookingSceneMenuBtns(){
-         
-          return null;
+          VBox vbox = new VBox(20);
+          vbox.setAlignment(Pos.TOP_CENTER);
+          vbox.setMaxWidth(200);
+          vbox.setPadding(new Insets(15, 12, 15, 12));
+          
+          date = new Label();
+          time = new Label(bookingtime);
+          
+          tablev = new TableView();
+     
+        
+        TableColumn shipid = new TableColumn("ID");
+        shipid.setCellValueFactory(
+                new PropertyValueFactory<>("shipid"));
+        
+        TableColumn shipname = new TableColumn("Ship Name");
+        shipname.setCellValueFactory(
+                new PropertyValueFactory<>("namn"));
+        
+        TableColumn shipowner = new TableColumn("Owner");
+        shipowner.setCellValueFactory(
+                new PropertyValueFactory<>("bolag"));
+        
+        TableColumn shipvolymid = new TableColumn("VolymID");
+        shipvolymid.setCellValueFactory(
+                new PropertyValueFactory<>("volymid"));
+        
+        oll = FXCollections.observableArrayList();
+        
+        tablev.getColumns().addAll(shipid,shipname,shipowner,shipvolymid);
+                        oll.clear();
+                        ships = m.getAllShip();
+                        List<Integer> shipids = m.getShipIDFromBooking(date.getText());
+                        for (Ship s : ships){
+                            for(Integer i : shipids){
+                                if(s.getID()==i){
+                                    ships.remove(s);
+                                }
+                            }
+                            oll.add(new ListShip(s));
+                        }
+                        
+                        
+                        tablev.setItems(oll);
+          
+          vbox.getChildren().setAll(date,time,tablev);
+          return vbox;
       }
-
+     
       private FadeTransition createFader(Node node) {
         FadeTransition fade = new FadeTransition(Duration.seconds(4), node);
         fade.setFromValue(1);

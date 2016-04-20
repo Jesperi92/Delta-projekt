@@ -246,15 +246,15 @@ public class Database implements InterfaceDB{
 			   " rows inserted");
     }
       
-      public List<Booking> getBookingFromDateAndSlot(String time, int slot){
+      public List<Booking> getBooking(String time, int slot){
           ArrayList<Booking> list = new ArrayList<Booking>();
-	ResultSet rs = db.executeQuery("Select Ship, Dag, Slot FROM KLast WHERE Slot='"+slot+"', Dag='"+time+"'"); 
+	ResultSet rs = db.executeQuery("Select  FROM Booking WHERE Slot='"+slot+"', Dag='"+time+"'"); 
 	try{
 	    Booking m=null;
 	    while(rs.next()){
 		m=new Booking(rs.getString("Fartyg"),
 				   rs.getInt("Slot"),
-				   rs.getTimestamp("Dag"));
+				   rs.getTime("Dag"));
                 m.setId(rs.getInt("LastID"));
                 
 		
@@ -269,5 +269,39 @@ public class Database implements InterfaceDB{
 	}
 	return null;
       }
-
+      public int getBookingCountFromDateAndSlot(String time, int slot){
+          int count = -1;
+	ResultSet rs = db.executeQuery("Select count(LastID) FROM Booking WHERE Slot='"+slot+"' AND Dag='"+time+"'"); 
+	
+	    
+        try {
+            count = rs.getInt("count(LastID)");
+            
+            return count;
+        } catch (SQLException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }
+	    db.closeIt(rs);
+	    return count;
+	
+      }
+    @Override
+    public List<Integer>getShipIDFromBooking(String date){
+	List<Integer> shipID = null;
+	ResultSet rs = db.executeQuery("SELECT Fartyg FROM Booking WHERE Dag='"+date+"'");
+	try{
+	    
+	    while(rs.next()){
+		
+		shipID.add(rs.getInt("Fartyg"));
+	    }
+	    db.closeIt(rs);
+	    return shipID;
+            
+	}catch(Exception e){
+	    System.err.println("Getting all municipalities: " + e.getMessage());
+	    db.closeIt(rs);
+	}
+	return null;
+    }
 }

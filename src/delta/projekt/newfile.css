@@ -56,5 +56,7 @@ Label {
 ListView{
     -fx-font-family: "monospace";
 }
-
+.action {
+    -fx-background-color: red;
+}
 
