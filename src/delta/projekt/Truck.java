@@ -21,7 +21,8 @@ public class Truck{
 
     @Override
     public String toString(){
-	return id + " | " +trucktyp + " | " + status + " | " + fee;
+        return String.format("%02d", id);
+	
     }
     public void settrucktyp(String trucktyp){
 	this.trucktyp=trucktyp;

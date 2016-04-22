@@ -43,11 +43,8 @@ public class Person{
    
     @Override
     public String toString(){
-        
-	/*return id +"\t | "+förnamn+ "\t | " + efternamn+ "\t | " +
-	    körkort+ "\t | " + 
-	    status+"\t | "+schema+"\t | "+wage;*/
-        return String.format("%02d|%-8s|%-8s|%-3s|%-4s|%-3s|%-4s", id, förnamn, efternamn, körkort, status, schema,wage);
+       
+        return String.format("%-8s %-8s",förnamn, efternamn);
     }
 
     public void setförnamn(String förnamn){

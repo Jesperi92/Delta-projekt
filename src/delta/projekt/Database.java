@@ -98,14 +98,18 @@ public class Database implements InterfaceDB{
 	String SQL=null;
         try {
             SQL = "UPDATE Personnel SET FirstName='"+p.förnamn()+"',LastName='"+p.efternamn()+"',Licence='"+licences.getInt("LicenceID")+"',WorkStatus='"+workstatus.getInt("WorkStatusID")+"',Schedule='"+schedules.getInt("ScheduleID")+"',Wage='"+licences.getInt("LicenceID")+"' WHERE PersonnelID='"+p.getID()+"'";
+            db.closeIt(licences);
+            db.closeIt(workstatus);
+            db.closeIt(schedules);
         } catch (SQLException ex) {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+            db.closeIt(licences);
+            db.closeIt(workstatus);
+            db.closeIt(schedules);
         }
 	System.out.println(db.executeUpdate(SQL) 
 			   + " rows updated");
-        db.closeIt(licences);
-        db.closeIt(workstatus);
-        db.closeIt(schedules);
+
     
     }
     @Override
@@ -121,13 +125,16 @@ public class Database implements InterfaceDB{
 	String SQL=null;
         try {
             SQL = "UPDATE Trucks SET Type='"+trucktypes.getInt("TypeID")+"',Status='"+truckstatus.getInt("StstusID")+"',Fee='"+trucktypes.getInt("TypeID")+"' WHERE TruckID='"+p.getID()+"'";
+            db.closeIt(trucktypes);
+            db.closeIt(truckstatus);
         } catch (SQLException ex) {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+            db.closeIt(trucktypes);
+            db.closeIt(truckstatus);
         }
 	System.out.println(db.executeUpdate(SQL) 
 			   + " rows updated");
-        db.closeIt(trucktypes);
-        db.closeIt(truckstatus);
+        
     
     }
     @Override
@@ -143,15 +150,19 @@ public class Database implements InterfaceDB{
         
         try {
             SQL = "UPDATE Boats SET Name='"+p.namn()+"',Owner='"+owner.getInt("ShipperID")+"',Volume='"+volumeid.getInt("VolumeID")+"' WHERE BoatID='"+p.getID()+"'";
+            db.closeIt(owner);
+            db.closeIt(volumeid);
         } catch (SQLException ex) {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+            db.closeIt(owner);
+            db.closeIt(volumeid);
         }
         
             
 	System.out.println(db.executeUpdate(SQL) 
 			   + " rows updated");
         
-        db.closeIt(owner);
+        
         
     
     }
@@ -199,8 +210,12 @@ public class Database implements InterfaceDB{
             SQL = "INSERT INTO Trucks"+
                     "(Type, Status, Fee)" +
                     " VALUES('"+trucktypes.getInt("TypeID")+"', "+"'"+truckstatus.getInt("StstusID")+"','"+trucktypes.getInt("TypeID")+"')";
+            db.closeIt(trucktypes);
+            db.closeIt(truckstatus);
         } catch (SQLException ex) {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+            db.closeIt(trucktypes);
+            db.closeIt(truckstatus);
         }
 	System.out.println(db.executeUpdate(SQL)+
 			   " rows inserted");
@@ -219,8 +234,14 @@ public class Database implements InterfaceDB{
             SQL = "INSERT INTO Personnel"+
                     "(FirstName, LastName, Licence, WorkStatus, Schedule,Wage)" +
                     " VALUES('"+m.förnamn()+"', '"+m.efternamn()+"','"+licences.getInt("LicenceID")+"','"+workstatus.getInt("WorkStatusID")+"','"+schedules.getInt("ScheduleID")+"','"+licences.getInt("LicenceID")+"')";
+            db.closeIt(licences);
+            db.closeIt(workstatus);
+            db.closeIt(schedules);
         } catch (SQLException ex) {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+            db.closeIt(licences);
+            db.closeIt(workstatus);
+            db.closeIt(schedules);
         }
 	System.out.println(db.executeUpdate(SQL)+
 			   " rows inserted");
@@ -231,16 +252,22 @@ public class Database implements InterfaceDB{
 	
        
 	String SQL = null;
+        ResultSet owner = null;
+        ResultSet volumeid = null;
         try {
-            ResultSet owner = db.executeQuery("SELECT ShipperID FROM Shippers WHERE Name='"+m.bolag()+"'");
+            owner = db.executeQuery("SELECT ShipperID FROM Shippers WHERE Name='"+m.bolag()+"'");
         
-            ResultSet volumeid = db.executeQuery("SELECT VolumeID FROM Volumes WHERE Volume='"+m.volymid()+"'");
+            volumeid = db.executeQuery("SELECT VolumeID FROM Volumes WHERE Volume='"+m.volymid()+"'");
 	
             SQL = "INSERT INTO Boats"+
                     "(Name, Owner, Volume)" +
                     " VALUES('"+m.namn()+"', '"+owner.getInt("ShipperID")+"', '"+volumeid.getInt("VolumeID")+"')";
+            db.closeIt(owner);
+            db.closeIt(volumeid);
         } catch (SQLException ex) {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+            db.closeIt(owner);
+            db.closeIt(volumeid);
         }
 	System.out.println(db.executeUpdate(SQL)+
 			   " rows inserted");
@@ -252,9 +279,9 @@ public class Database implements InterfaceDB{
 	try{
 	    Booking m=null;
 	    while(rs.next()){
-		m=new Booking(rs.getString("Fartyg"),
+		m=new Booking(rs.getInt("Fartyg"),
 				   rs.getInt("Slot"),
-				   rs.getTime("Dag"));
+				   rs.getTime("Dag").toString());
                 m.setId(rs.getInt("LastID"));
                 
 		
@@ -276,27 +303,38 @@ public class Database implements InterfaceDB{
 	    
         try {
             count = rs.getInt("count(LastID)");
-            
+            db.closeIt(rs);
             return count;
         } catch (SQLException ex) {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+            db.closeIt(rs);
         }
-	    db.closeIt(rs);
+	    
 	    return count;
 	
       }
+   
+    
     @Override
-    public List<Integer>getShipIDFromBooking(String date){
-	List<Integer> shipID = null;
-	ResultSet rs = db.executeQuery("SELECT Fartyg FROM Booking WHERE Dag='"+date+"'");
+    public List<Ship>getAllShipBooking(String date){
+        
+        
+        
+	ArrayList<Ship> list = new ArrayList<Ship>();
+	ResultSet rs = db.executeQuery("SELECT b.BoatID, b.Name, s.Name AS Owner, v.Volume FROM Boats b, Shippers s, Volumes v WHERE b.Owner=s.ShipperID AND b.Volume=v.VolumeID AND b.BoatID not in(Select Fartyg From Booking Where Dag='"+date+"')");
 	try{
-	    
+	    Ship m=null;
 	    while(rs.next()){
-		
-		shipID.add(rs.getInt("Fartyg"));
+		m=new Ship(rs.getString("Name"),
+				   rs.getString("Owner"),
+				   rs.getString("Volume"));
+                                   
+		m.setID(rs.getInt("BoatID"));
+		list.add(m);
 	    }
+            
 	    db.closeIt(rs);
-	    return shipID;
+	    return list;
             
 	}catch(Exception e){
 	    System.err.println("Getting all municipalities: " + e.getMessage());
@@ -304,4 +342,122 @@ public class Database implements InterfaceDB{
 	}
 	return null;
     }
+    @Override
+    public List<Person>getAllPersonsForBooking(String schema, String körkort, String date){
+	ArrayList<Person> list = new ArrayList<Person>();
+        
+        
+        ResultSet licences = db.executeQuery("SELECT LicenceID FROM Licences WHERE Licence='"+körkort+"'");
+       
+        ResultSet schedules = db.executeQuery("SELECT ScheduleID FROM WorkSchedules WHERE Schedule='"+schema+"'");
+        
+        ResultSet rs = null;
+	
+	try{
+            rs = db.executeQuery("Select p.PersonnelID, p.FirstName, p.LastName, l.Licence, w.Status, s.Schedule, wa.Wage FROM Personnel p, Licences l, WorkStatuses w, WorkSchedules s, Wages wa WHERE p.Licence=l.LicenceID AND p.WorkStatus=w.WorkStatusID AND p.Schedule=s.ScheduleID AND p.Wage=wa.WageID AND p.WorkStatus in(1,2) AND p.Schedule ='"+schedules.getInt("ScheduleID")+"' AND p.Licence ='"+licences.getInt("LicenceID")+"' AND p.PersonnelID not in (Select PersonnelID From BookedPersonnel Where Dag = '"+date+"')");
+	    Person m=null;
+	    while(rs.next()){
+		m=new Person(rs.getString("FirstName"),
+				   rs.getString("LastName"),
+				   rs.getString("Licence"),
+                                   rs.getString("Status"),
+				   rs.getString("Schedule"));
+                m.setID(rs.getInt("PersonnelID"));
+                m.setWage(rs.getString("Wage"));
+		
+		list.add(m);
+	    }
+            db.closeIt(licences);
+            db.closeIt(schedules);
+	    db.closeIt(rs);
+	    return list;
+            
+	}catch(Exception e){
+	    System.err.println("Getting all persons: " + e.getMessage());
+            db.closeIt(licences);
+            db.closeIt(schedules);
+	    db.closeIt(rs);
+	}
+	return null;
+    }
+    @Override
+    public List<Truck>getAllTrucksForBooking(String type){
+	ArrayList<Truck> list = new ArrayList<Truck>();
+        ResultSet trucktypes = db.executeQuery("SELECT TypeID FROM TruckTypes WHERE Type='"+type+"'");
+        
+	ResultSet rs=null;
+	try{
+            rs = db.executeQuery("SELECT t.TruckID, tt.Type, ts.Status, tf.Fee From Trucks t, TruckTypes tt, TruckStatuses ts, TruckFees tf WHERE t.Type=tt.TypeID AND t.Status=ts.StstusID AND t.Fee=tf.FeeID AND t.Type='"+trucktypes.getInt("TypeID")+"' AND t.Status IN(1)");
+	    Truck m=null;
+	    while(rs.next()){
+		m=new Truck(rs.getString("Type"),
+				   rs.getString("Status"));
+				  
+		m.setID(rs.getInt("TruckID"));
+                m.setFee(rs.getInt("Fee"));
+		list.add(m);
+	    }
+            
+	    db.closeIt(rs);
+	    return list;
+            
+	}catch(Exception e){
+	    System.err.println("Getting all municipalities: " + e.getMessage());
+	    db.closeIt(rs);
+            db.closeIt(trucktypes);
+	}
+	return null;
+    }
+    public int getBookingRightAmountOfRecourses(String volym){
+          int count = -1;
+	ResultSet rs = db.executeQuery("Select Count FROM Volumes WHERE Volume='"+volym+"'"); 
+	
+	    
+        try {
+            count = rs.getInt("Count");
+            db.closeIt(rs);
+            return count;
+        } catch (SQLException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+            db.closeIt(rs);
+        }
+	    
+	    return count;
+	
+      }
+      @Override
+      public void addBooking(Booking b){
+	
+	int lastid = 0;
+       
+	String SQL = null;
+        String SQL2 = null;
+        String SQL3 = null;
+        ResultSet owner = null;
+        ResultSet volumeid = null;
+        SQL = "INSERT INTO Booking"+
+                "(Fartyg, Dag, Slot)" +
+                " VALUES('"+b.getShip()+"', '"+b.getDate()+"', '"+b.getSlot()+"')";
+        
+	System.out.println(db.executeUpdate(SQL)+
+			   " rows inserted");
+        ResultSet bookid = db.executeQuery("Select LastID From Booking Where Dag='"+b.getDate()+"' AND Slot='"+b.getSlot()+"'");
+        try {
+            lastid = bookid.getInt("LastID");
+            db.closeIt(bookid);
+        } catch (SQLException ex) {
+            db.closeIt(bookid);
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        for(int i : b.getPersonid()){
+        SQL2 = "INSERT INTO BookedPersonnel VALUES('"+lastid+"','"+i+"','"+b.getDate()+"')";
+        db.executeUpdate(SQL2);
+        }
+        for(int i : b.getTruckid()){
+        SQL3 = "INSERT INTO BookedTrucks VALUES('"+lastid+"','"+i+"','"+b.getDate()+"')";
+        db.executeUpdate(SQL3);
+        }
+        
+    }
+   
 }

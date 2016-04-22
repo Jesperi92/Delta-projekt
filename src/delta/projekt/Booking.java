@@ -8,16 +8,16 @@ import java.util.List;
 
 public class Booking{
     private int id;
-    private String ship;
+    private int ship;
     private int slot;
     String date;
-    private List<Truck> truckid;
-    private List<Person> personid;
+    private List<Integer> truckid;
+    private List<Integer> personid;
    
-    public Booking(String ship, int slot,
-			Time date){
+    public Booking(int ship, int slot,
+			String date){
         this.slot=slot;
-        this.date=date.toString();
+        this.date=date;
         this.ship=ship;
         
     }
@@ -30,11 +30,11 @@ public class Booking{
         this.id = id;
     }
 
-    public String getShip() {
+    public int getShip() {
         return ship;
     }
 
-    public void setShip(String ship) {
+    public void setShip(int ship) {
         this.ship = ship;
     }
 
@@ -54,19 +54,19 @@ public class Booking{
         this.date = date;
     }
 
-    public List<Truck> getTruckid() {
+    public List<Integer> getTruckid() {
         return truckid;
     }
 
-    public void setTruckid(List<Truck> truckid) {
+    public void setTruckid(List<Integer> truckid) {
         this.truckid = truckid;
     }
 
-    public List<Person> getPersonid() {
+    public List<Integer> getPersonid() {
         return personid;
     }
 
-    public void setPersonid(List<Person> personid) {
+    public void setPersonid(List<Integer> personid) {
         this.personid = personid;
     }
     
