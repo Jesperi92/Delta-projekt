@@ -44,7 +44,8 @@ public class Person{
     @Override
     public String toString(){
        
-        return String.format("%-8s %-8s",förnamn, efternamn);
+        return String.format("%s %-8s (%s)",förnamn, efternamn,status);
+        
     }
 
     public void setförnamn(String förnamn){

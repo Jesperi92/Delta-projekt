@@ -56,7 +56,7 @@ public class Database implements InterfaceDB{
 	    return list;
             
 	}catch(Exception e){
-	    System.err.println("Getting all municipalities: " + e.getMessage());
+	    System.err.println("Getting all trucks: " + e.getMessage());
 	    db.closeIt(rs);
 	}
 	return null;
@@ -79,7 +79,7 @@ public class Database implements InterfaceDB{
 	    return list;
             
 	}catch(Exception e){
-	    System.err.println("Getting all municipalities: " + e.getMessage());
+	    System.err.println("Getting all ships: " + e.getMessage());
 	    db.closeIt(rs);
 	}
 	return null;
@@ -273,21 +273,38 @@ public class Database implements InterfaceDB{
 			   " rows inserted");
     }
       
-      public List<Booking> getBooking(String time, int slot){
+      public List<Booking> getBooking(String time, int Ship){
           ArrayList<Booking> list = new ArrayList<Booking>();
-	ResultSet rs = db.executeQuery("Select  FROM Booking WHERE Slot='"+slot+"', Dag='"+time+"'"); 
-	try{
+          ArrayList<Integer> personnelid = new ArrayList<Integer>();
+          ArrayList<Integer> truckid = new ArrayList<Integer>();
+	ResultSet rs = db.executeQuery("Select * FROM Booking WHERE Fartyg='"+Ship+"', Dag='"+time+"'"); 
+	ResultSet personnel =null;
+        ResultSet trucks = null;
+        try{
 	    Booking m=null;
+            personnel = null;
+            trucks = null;
 	    while(rs.next()){
 		m=new Booking(rs.getInt("Fartyg"),
 				   rs.getInt("Slot"),
 				   rs.getTime("Dag").toString());
                 m.setId(rs.getInt("LastID"));
                 
+                
 		
 		list.add(m);
+                personnel = db.executeQuery("Select * FROM BookedPersonnel WHERE LastID = '"+m.getId()+"'");
+                while(personnel.next()){
+                    personnelid.add(personnel.getInt("PersonnelID"));
+                }
+                trucks = db.executeQuery("Select * FROM BookedTrucks WHERE LastID = '"+m.getId()+"'");
+                while(trucks.next()){
+                    truckid.add(trucks.getInt("TruckID"));
+                }
 	    }
 	    db.closeIt(rs);
+            db.closeIt(personnel);
+            db.closeIt(trucks);
 	    return list;
             
 	}catch(Exception e){

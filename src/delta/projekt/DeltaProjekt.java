@@ -83,7 +83,7 @@ public class DeltaProjekt extends Application {
     DatePicker datePicker = new DatePicker();
     ObservableList candidates,selected;
     double rightammountofpersonnel = 0;
-    Label personnelmsg,trucksmsg;
+    Label personnelmsg,trucksmsg, firstDock, secondDock, thirdDock;
     FadeTransition faderrr;
     
     Button firstDock0816,firstDock0008,firstDock1600,secondDock0816,secondDock0008,secondDock1600,thirdDock0816,thirdDock0008,thirdDock1600;
@@ -97,6 +97,7 @@ public class DeltaProjekt extends Application {
     public void start(Stage primaryStage) {
         
         thestage = primaryStage;
+        
         //thestage.initStyle(StageStyle.UNDECORATED);
         startScene = new Scene(getStartPageBorderPane(), 500, 600);
         statisticsScene = new Scene(getStatisticsPageBorderPane(), 500, 600);
@@ -740,18 +741,23 @@ public class DeltaProjekt extends Application {
             goBackBtn.setOnAction(new EventHandler<ActionEvent>() {
               @Override
               public void handle(ActionEvent event) {
-                  gridpane.getChildren().clear();
-                  GridPane.setHalignment(messages, HPos.CENTER);
-    gridpane.add(messages, 1, 0);
-    GridPane.setHalignment(datePicker, HPos.CENTER);
-    gridpane.add(datePicker, 1, 1);
-    GridPane.setHalignment(uppdate, HPos.CENTER);
-    gridpane.add(uppdate, 1, 2);
+                  firstDock.setVisible(false);
+                    secondDock.setVisible(false);
+                    thirdDock.setVisible(false);
+                    firstDock0008.setVisible(false);
+                    firstDock0816.setVisible(false);
+                    firstDock1600.setVisible(false);
+                    secondDock0008.setVisible(false);
+                    secondDock0816.setVisible(false);
+                    secondDock1600.setVisible(false);
+                    thirdDock0008.setVisible(false);
+                    thirdDock0816.setVisible(false);
+                    thirdDock1600.setVisible(false);
+                  
     // First name label
     
     
-    GridPane.setHalignment(goBackBtn, HPos.CENTER);
-    gridpane.add(goBackBtn, 1, 3);
+   
    /* firstDock0816.getStyleClass().remove("action");
     firstDock1600.getStyleClass().remove("action");
     firstDock0008.getStyleClass().remove("action");
@@ -766,11 +772,11 @@ public class DeltaProjekt extends Application {
               }
           });
           
-          Label firstDock = new Label("Dock 101");
+          firstDock = new Label("Dock 101");
           
-          Label secondDock = new Label("Dock 201");
+          secondDock = new Label("Dock 201");
           
-          Label thirdDock = new Label("Dock 301");
+          thirdDock = new Label("Dock 301");
                     
                         
           firstDock0816 = new Button("08-16");
@@ -829,48 +835,48 @@ public class DeltaProjekt extends Application {
     // First name label
     
                 GridPane.setHalignment(firstDock, HPos.CENTER);
-    gridpane.add(firstDock, 1, 3);
+    gridpane.add(firstDock, 1, 4);
     firstDock.setVisible(false);
 
     // Last name label
     GridPane.setHalignment(firstDock0008, HPos.CENTER);
-    gridpane.add(firstDock0008, 0, 4);
+    gridpane.add(firstDock0008, 0, 5);
     firstDock0008.setVisible(false);
 
     // First name field
     GridPane.setHalignment(firstDock0816, HPos.CENTER);
-    gridpane.add(firstDock0816, 1, 4);
+    gridpane.add(firstDock0816, 1, 5);
     firstDock0816.setVisible(false);
 
     // Last name field
     GridPane.setHalignment(firstDock1600, HPos.CENTER);
-    gridpane.add(firstDock1600, 2, 4);
+    gridpane.add(firstDock1600, 2, 5);
     firstDock1600.setVisible(false);
 
     // Save button
     GridPane.setHalignment(secondDock, HPos.CENTER);
-    gridpane.add(secondDock, 1, 5);
+    gridpane.add(secondDock, 1, 6);
     secondDock.setVisible(false);
     GridPane.setHalignment(secondDock0008, HPos.CENTER);
-    gridpane.add(secondDock0008, 0, 6);
+    gridpane.add(secondDock0008, 0, 7);
     secondDock0008.setVisible(false);
     GridPane.setHalignment(secondDock0816, HPos.CENTER);
-    gridpane.add(secondDock0816, 1, 6);
+    gridpane.add(secondDock0816, 1, 7);
     secondDock0816.setVisible(false);
     GridPane.setHalignment(secondDock1600, HPos.CENTER);
-    gridpane.add(secondDock1600, 2, 6);
+    gridpane.add(secondDock1600, 2, 7);
     secondDock1600.setVisible(false);
     GridPane.setHalignment(thirdDock, HPos.CENTER);
-    gridpane.add(thirdDock, 1, 7);
+    gridpane.add(thirdDock, 1, 8);
     thirdDock.setVisible(false);
     GridPane.setHalignment(thirdDock0008, HPos.CENTER);
-    gridpane.add(thirdDock0008, 0, 8);
+    gridpane.add(thirdDock0008, 0, 9);
     thirdDock0008.setVisible(false);
     GridPane.setHalignment(thirdDock0816, HPos.CENTER);
-    gridpane.add(thirdDock0816, 1, 8);
+    gridpane.add(thirdDock0816, 1, 9);
     thirdDock0816.setVisible(false);
     GridPane.setHalignment(thirdDock1600, HPos.CENTER);
-    gridpane.add(thirdDock1600, 2, 8);
+    gridpane.add(thirdDock1600, 2, 9);
     GridPane.setHalignment(goBackBtn, HPos.CENTER);
     thirdDock1600.setVisible(false);
     
@@ -881,6 +887,9 @@ public class DeltaProjekt extends Application {
             @Override
             public void handle(ActionEvent event) {
                 if(datePicker.getValue() == null){
+                    firstDock.setVisible(false);
+                    secondDock.setVisible(false);
+                    thirdDock.setVisible(false);
                     firstDock0008.setVisible(false);
                     firstDock0816.setVisible(false);
                     firstDock1600.setVisible(false);
@@ -895,6 +904,9 @@ public class DeltaProjekt extends Application {
                     blinkThenFade.play();
                 }
                 else{
+                    firstDock.setVisible(true);
+                    secondDock.setVisible(true);
+                    thirdDock.setVisible(true);
                     firstDock0008.setVisible(true);
                     firstDock0816.setVisible(true);
                     firstDock1600.setVisible(true);
@@ -989,6 +1001,7 @@ public class DeltaProjekt extends Application {
                     
                     
                     for(Ship s : ships){
+                        if(s.volymid().equals("A")||s.volymid().equals("AA"))
                         olll.add(new ListShip(s));
                     }
                    thestage.setScene(bookingChooseShipScene);
@@ -1009,6 +1022,7 @@ public class DeltaProjekt extends Application {
                     
                     
                     for(Ship s : ships){
+                        if(s.volymid().equals("A")||s.volymid().equals("AA"))
                         olll.add(new ListShip(s));
                     }
                     thestage.setScene(bookingChooseShipScene);
@@ -1028,6 +1042,7 @@ public class DeltaProjekt extends Application {
                     
                     
                     for(Ship s : ships){
+                        if(s.volymid().equals("A")||s.volymid().equals("AA"))
                         olll.add(new ListShip(s));
                     }
                     thestage.setScene(bookingChooseShipScene);
@@ -1047,6 +1062,7 @@ public class DeltaProjekt extends Application {
                     
                     
                     for(Ship s : ships){
+                        if(s.volymid().equals("B")||s.volymid().equals("BB")||s.volymid().equals("C"))
                         olll.add(new ListShip(s));
                     }
                     
@@ -1068,6 +1084,7 @@ public class DeltaProjekt extends Application {
                     
                     
                     for(Ship s : ships){
+                        if(s.volymid().equals("B")||s.volymid().equals("BB")||s.volymid().equals("C"))
                         olll.add(new ListShip(s));
                     }
                     thestage.setScene(bookingChooseShipScene);
@@ -1087,6 +1104,7 @@ public class DeltaProjekt extends Application {
                     
                     
                     for(Ship s : ships){
+                        if(s.volymid().equals("B")||s.volymid().equals("BB")||s.volymid().equals("C"))
                         olll.add(new ListShip(s));
                     }
                     thestage.setScene(bookingChooseShipScene);
@@ -1106,6 +1124,7 @@ public class DeltaProjekt extends Application {
                     
                     
                     for(Ship s : ships){
+                        if(s.volymid().equals("CC")||s.volymid().equals("CCC")||s.volymid().equals("K"))
                         olll.add(new ListShip(s));
                     }
                     thestage.setScene(bookingChooseShipScene);
@@ -1125,6 +1144,7 @@ public class DeltaProjekt extends Application {
                     
                     
                     for(Ship s : ships){
+                        if(s.volymid().equals("CC")||s.volymid().equals("CCC")||s.volymid().equals("K"))
                         olll.add(new ListShip(s));
                     }
                     thestage.setScene(bookingChooseShipScene);
@@ -1144,6 +1164,7 @@ public class DeltaProjekt extends Application {
                     
                     
                     for(Ship s : ships){
+                        if(s.volymid().equals("CC")||s.volymid().equals("CCC")||s.volymid().equals("K"))
                         olll.add(new ListShip(s));
                     }
                     thestage.setScene(bookingChooseShipScene);
@@ -1542,7 +1563,7 @@ public class DeltaProjekt extends Application {
           .getSelectedItem();
       
       if (potential != null) {
-        System.out.println(candidatesListView.getSelectionModel().getSelectedIndex());
+        
                 
         candidatesListView.getSelectionModel().clearSelection();
         
@@ -1835,6 +1856,8 @@ public class DeltaProjekt extends Application {
                      messages.setText("Booked");
                      messages.setVisible(true);
                      blinkThenFadee.play();
+                     candidates.clear();
+                     selected.clear();
                      thestage.setScene(dailyBookingScene);
                  }
               }
