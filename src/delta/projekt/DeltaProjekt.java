@@ -28,14 +28,20 @@ import javafx.animation.KeyValue;
 import javafx.animation.SequentialTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.WeakEventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -44,8 +50,12 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollBar;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextAreaBuilder;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
@@ -54,6 +64,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -62,13 +73,13 @@ public class DeltaProjekt extends Application {
     Stage thestage;
     Scene startScene, statisticsScene,dailyBookingScene,alterResourcersScene, addResourceScene, alterAResourceScene,changeARecourceScene, bookingChooseShipScene, bookingChoosePersonnelScene, bookingChooseTrucksScene ;
     Database m = new Database();
-    
+    Booking daybooking;
     List<Person> persons;
     List<Truck> trucks;
-    List<Ship> ships;
+    List<Ship> ships,shipsstatistics;
     ArrayList<Truck> booktrucks = new ArrayList<Truck>();
     ArrayList<Person> bookpersons = new ArrayList<Person>();
-    
+    GridPane grid;
     ArrayList<Integer> personnelids = new ArrayList<Integer>();
     Person changeperson;
     Truck changetruck;
@@ -76,7 +87,7 @@ public class DeltaProjekt extends Application {
     ObservableList oll,olll;
     Label messages;
     TableView tablev,tablev2;
-    Label alterMessage,date,time,harbor;
+    Label alterMessage,date,time,harbor,daystattime,daystatharbor,daystatship,daystatdate;
     File f;
     String bookingdate, bookingtime, bookingharbor;
     int bookingslot, amountOfRecoursesToBook;
@@ -85,8 +96,37 @@ public class DeltaProjekt extends Application {
     double rightammountofpersonnel = 0;
     Label personnelmsg,trucksmsg, firstDock, secondDock, thirdDock;
     FadeTransition faderrr;
-    
+    String personstext,wagetext,trucktext,truckfeetext;
     Button firstDock0816,firstDock0008,firstDock1600,secondDock0816,secondDock0008,secondDock1600,thirdDock0816,thirdDock0008,thirdDock1600;
+    ArrayList<Line> lines = new ArrayList<Line>();
+    ArrayList<Label> shipnamelist = new ArrayList<Label>();
+    ArrayList<Label> personnelliststat = new ArrayList<Label>();
+    ArrayList<Label> wagepersonnellist = new ArrayList<Label>();
+    ArrayList<Label> truckidlist = new ArrayList<Label>();
+    ArrayList<Label> truckidfeelist = new ArrayList<Label>();
+    
+    ArrayList<Label> shipnamelistlabel = new ArrayList<Label>();
+    ArrayList<Label> personnelliststatlabel = new ArrayList<Label>();
+    ArrayList<Label> wagepersonnellistlabel = new ArrayList<Label>();
+    ArrayList<Label> truckidlistlabel = new ArrayList<Label>();
+    ArrayList<Label> truckidfeelistlabel = new ArrayList<Label>();
+    int total = 0;
+    ArrayList<Label> totalfees = new ArrayList<Label>();
+    
+    ArrayList<GridPane> gridpaneforstat;
+    int totalday;
+        Label totalfeeday = new Label();
+    VBox statisticsPageVbox;
+    ArrayList<Person> thispersonlist;
+    ArrayList<Truck> thistrucklist;
+    Label statperson = new Label();
+        Label stattruck = new Label();
+        Label personwage = new Label();
+        Label truckfee = new Label();
+        Label statpersoncolumn = new Label("Namn");
+        Label stattruckcolumn = new Label("Truck");
+        Label personwagecolumn = new Label("Pris");
+        Label truckfeecolumn = new Label("Pris");
     
     
      public static void main(String[] args) {
@@ -97,7 +137,9 @@ public class DeltaProjekt extends Application {
     public void start(Stage primaryStage) {
         
         thestage = primaryStage;
-        
+        Group root = new Group();
+        ScrollBar s1 = new ScrollBar();
+        root.getChildren().add(s1);
         //thestage.initStyle(StageStyle.UNDECORATED);
         startScene = new Scene(getStartPageBorderPane(), 500, 600);
         statisticsScene = new Scene(getStatisticsPageBorderPane(), 500, 600);
@@ -209,6 +251,7 @@ public class DeltaProjekt extends Application {
     }
     public BorderPane getStatisticsPageBorderPane(){
         BorderPane statisticsPageBorderPane = new BorderPane();
+        
         
         statisticsPageBorderPane.setCenter(addStatisticsMenuBtns());
         return statisticsPageBorderPane ;
@@ -667,30 +710,80 @@ public class DeltaProjekt extends Application {
         return vbox;
     }
       public VBox addStatisticsMenuBtns(){
-        VBox statisticsPageVbox = new VBox(20);
+        VBox stat = new VBox(20);
+        stat.setAlignment(Pos.TOP_CENTER);
+        stat.setMaxWidth(400);
+        stat.setPadding(new Insets(15, 12, 15, 12));
+        ScrollPane scroll = new ScrollPane(stat);
+        scroll.setPrefViewportWidth(400);
+        
+        statisticsPageVbox = new VBox(20);
         statisticsPageVbox.setAlignment(Pos.TOP_CENTER);
-        statisticsPageVbox.setMaxWidth(200);
+        statisticsPageVbox.setMaxWidth(400);
         statisticsPageVbox.setPadding(new Insets(15, 12, 15, 12));
-        
+        persons = new ArrayList<Person>();
+        trucks = new ArrayList<Truck>();
         DatePicker datePicker2 = new DatePicker();
-        
+        datePicker2.setMaxWidth(120);
+        daystatharbor = new Label();
+        daystatharbor.setAlignment(Pos.TOP_LEFT);
+        ScrollPane scrollday = new ScrollPane();
+        scrollday.setPrefWidth(300);
+        daystatship = new Label();
+        daystatship.setAlignment(Pos.TOP_LEFT);
+        daystattime = new Label();
+        daystattime.setAlignment(Pos.TOP_LEFT);
+        daystatdate = new Label();
+        daystatdate.setAlignment(Pos.TOP_LEFT);
+        Line sträck = new Line(0,0,300,0);
+        Line sträck2 = new Line(0,0,300,0);
         ChoiceBox choicebox = new ChoiceBox();
         choicebox.getItems().addAll("Day Rapport", "Week Rapport");
+        VBox daystat = new VBox(20);
         
+        daystat.setAlignment(Pos.TOP_CENTER);
+        daystat.setMaxWidth(300);
         Button back = new Button("Back");
         back.setPrefSize(120, 20);
-        
+        Button next = new Button(">");
+        next.setPrefSize(120, 20);
+        Button backpointer = new Button("<");
+        backpointer.setPrefSize(120, 20);
         Label weekLabel = new Label("Week:");
         Label dateLabel = new Label("Date:");
         Label shipLabel = new Label("Ship:");
         
         ComboBox week = new ComboBox();
+        
         for(int i = 1; i <=52; i++){
             week.getItems().add(i);
         }
         TextField date = new TextField();
-        TextField ship = new TextField();
         
+        
+        TableView daytableview = new TableView();
+        daytableview.setMaxWidth(250);
+        
+        TableColumn shipid = new TableColumn("ID");
+        shipid.setCellValueFactory(
+                new PropertyValueFactory<>("shipid"));
+        
+        TableColumn shipname = new TableColumn("Ship Name");
+        shipname.setCellValueFactory(
+                new PropertyValueFactory<>("namn"));
+        
+        TableColumn shipowner = new TableColumn("Owner");
+        shipowner.setCellValueFactory(
+                new PropertyValueFactory<>("bolag"));
+        
+        TableColumn shipvolymid = new TableColumn("VolymID");
+        shipvolymid.setCellValueFactory(
+                new PropertyValueFactory<>("volymid"));
+        
+        
+        
+        daytableview.getColumns().addAll(shipid,shipname,shipowner,shipvolymid);
+        ObservableList tvships = FXCollections.observableArrayList();
        statisticsPageVbox.getChildren().addAll(choicebox,back);
         
        choicebox.setOnAction(new EventHandler<ActionEvent>() {
@@ -699,8 +792,9 @@ public class DeltaProjekt extends Application {
             public void handle(ActionEvent event) {
                 if(choicebox.getSelectionModel().getSelectedItem() != null){
                 if(choicebox.getSelectionModel().getSelectedItem().toString().equals("Day Rapport")){
+                    
                    statisticsPageVbox.getChildren().clear();
-                   statisticsPageVbox.getChildren().addAll(choicebox,dateLabel,datePicker,shipLabel,ship,back);
+                   statisticsPageVbox.getChildren().addAll(choicebox,dateLabel,datePicker2,back);
                 }
                 else if(choicebox.getSelectionModel().getSelectedItem().toString().equals("Week Rapport")){
                    statisticsPageVbox.getChildren().clear();
@@ -718,6 +812,402 @@ public class DeltaProjekt extends Application {
                 thestage.setScene(startScene);
             }
         });
+        datePicker2.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                statisticsPageVbox.getChildren().clear();
+                shipsstatistics = null;
+                tvships.clear();
+                shipsstatistics = m.getAllShipForStatistics(datePicker2.getValue().toString());
+                for(Ship s : shipsstatistics)
+                    tvships.add(new ListShip(s));
+                daytableview.setItems(tvships);
+                statisticsPageVbox.getChildren().addAll(choicebox,dateLabel,datePicker2,back,next,shipLabel,daytableview);
+            }
+        });
+        next.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                statisticsPageVbox.getChildren().removeAll(next,shipLabel,daytableview);
+                Ship selected = shipsstatistics.get(daytableview.getSelectionModel().getSelectedIndex());
+                daystatship.setText(selected.namn());
+                totalday = 0;
+                daybooking = m.getBooking(datePicker2.getValue().toString(), selected.getID());
+                daystatdate.setText(daybooking.getDate());
+                System.out.println(daybooking);
+                if(daybooking.getSlot() == 1 ||daybooking.getSlot() == 4 ||daybooking.getSlot() == 7)
+                    daystattime.setText("00-08");
+                else if(daybooking.getSlot() == 2 ||daybooking.getSlot() == 5 ||daybooking.getSlot() == 8)
+                    daystattime.setText("08-16");
+                else if(daybooking.getSlot() == 3 ||daybooking.getSlot() == 6 ||daybooking.getSlot() == 9)
+                    daystattime.setText("16-00");
+                
+                if(daybooking.getSlot() == 1 ||daybooking.getSlot() == 2 ||daybooking.getSlot() == 3)
+                    daystatharbor.setText("K101");
+                else if(daybooking.getSlot() == 4 ||daybooking.getSlot() == 5 ||daybooking.getSlot() == 6)
+                    daystatharbor.setText("K201");
+                else if(daybooking.getSlot() == 7 ||daybooking.getSlot() == 8 ||daybooking.getSlot() == 9)
+                    daystatharbor.setText("K301");
+                    
+                for(Integer i : daybooking.getPersonid())
+                    persons.add(m.getAllPersonsForStat(i));
+                
+                for (Integer i : daybooking.getTruckid())
+                    trucks.add(m.getAllTrucksForStat(i));
+                
+                daybooking.setPersons(persons);
+                daybooking.setTrucks(trucks);
+                personstext = "";
+                grid = new GridPane();
+                grid.prefWidth(300);
+                grid.setHgap(20);
+                grid.add(statpersoncolumn, 0, 0);
+                grid.add(personwagecolumn, 1, 0);
+                grid.add(stattruckcolumn, 2, 0);
+                grid.add(truckfeecolumn, 3, 0);
+                for(Person p : persons)
+                    personstext = personstext + (p.förnamn()+","+p.efternamn()+"\n");
+                
+                statperson.setText(personstext);
+                grid.add(statperson, 0, 1);
+                GridPane.setValignment(statperson, VPos.TOP);
+                wagetext = "";
+               
+                for(Person p : persons)
+                    if(p.status().equals("100%")){
+                        totalday = totalday +(Integer.parseInt(p.getwage())*8);
+                    wagetext = wagetext +((Integer.parseInt(p.getwage())*8)+"\n");
+                    }
+                    else if(p.status().equals("50%")){
+                        totalday = totalday +(Integer.parseInt(p.getwage())*4);
+                        wagetext = wagetext +((Integer.parseInt(p.getwage())*4)+"\n");
+                    }
+                personwage.setText(wagetext);
+                grid.add(personwage, 1, 1);
+                GridPane.setValignment(personwage, VPos.TOP);
+                trucktext = "";
+                
+                for(Truck t : trucks)
+                    trucktext = trucktext + (t.getID()+"\n");
+                
+                stattruck.setText(trucktext);
+                grid.add(stattruck, 2, 1);
+                GridPane.setValignment(stattruck, VPos.TOP);
+                truckfeetext = "";
+               
+                for(Truck t : trucks){
+                    totalday = totalday +(t.gettruckfee()*8);
+                    truckfeetext = truckfeetext +((t.gettruckfee()*8)+"\n");
+                }
+                truckfee.setText(truckfeetext);
+                grid.add(truckfee, 3, 1);
+                GridPane.setValignment(truckfee, VPos.TOP);
+                totalfeeday.setText("Total: "+totalday);
+                daystat.getChildren().addAll(daystatdate,daystattime,daystatharbor,daystatship,sträck,grid,sträck2,totalfeeday);
+                scrollday.setContent(daystat);
+                
+                statisticsPageVbox.getChildren().addAll(backpointer,scrollday);
+                
+            }
+        });
+        backpointer.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                daystat.getChildren().clear();
+                persons.clear();
+                trucks.clear();
+                totalday = 0;
+                statisticsPageVbox.getChildren().removeAll(backpointer,scrollday);
+                statisticsPageVbox.getChildren().addAll(next,shipLabel,daytableview);
+                
+            }
+        });
+        week.setOnAction(new EventHandler() {
+            @Override
+            public void handle(Event event) {
+                total = 0;
+                totalfees.clear();
+                gridpaneforstat = new ArrayList<GridPane>();
+                shipnamelist.clear();
+                personnelliststat.clear();
+                wagepersonnellist.clear();
+                truckidlist.clear();
+                truckidfeelist.clear();
+                shipnamelistlabel.clear();
+                personnelliststatlabel.clear();
+                wagepersonnellistlabel.clear();
+                truckidlistlabel.clear();
+                truckidfeelistlabel.clear();
+                stat.getChildren().clear();
+                statisticsPageVbox.getChildren().clear();
+                statisticsPageVbox.getChildren().addAll(choicebox,weekLabel,week,back);
+                ArrayList<String> dates = new ArrayList<String>();
+                SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+                Calendar cal = Calendar.getInstance();
+                    cal.set(Calendar.WEEK_OF_YEAR, week.getSelectionModel().getSelectedIndex());        
+                    cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+                    dates.add(format1.format(cal.getTime()));
+                    cal.set(Calendar.DAY_OF_WEEK, Calendar.TUESDAY);
+                    dates.add(format1.format(cal.getTime()));
+                    cal.set(Calendar.DAY_OF_WEEK, Calendar.WEDNESDAY);
+                    dates.add(format1.format(cal.getTime()));
+                    cal.set(Calendar.DAY_OF_WEEK, Calendar.THURSDAY);
+                    dates.add(format1.format(cal.getTime()));
+                    cal.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
+                    dates.add(format1.format(cal.getTime()));
+                    cal.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+                    dates.add(format1.format(cal.getTime()));
+                    cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+                    dates.add(format1.format(cal.getTime()));
+                    List<Booking> bookings = m.getBookingList(dates);
+                    Label dateslabel = new Label(dates.get(0)+" - "+dates.get(dates.size()-1));
+                    stat.getChildren().add(dateslabel);
+                    Label kaj1 = new Label("K101");
+                    Label kaj2 = new Label("K201");
+                    Label kaj3 = new Label("K301");
+                    lines.add(new Line(0,0,300,0));
+                    if(bookings.size() != 0){
+                    stat.getChildren().add(kaj1);
+                    stat.getChildren().add(lines.get(lines.size()-1));
+                    for(Booking b : bookings){
+                       thispersonlist = new ArrayList<Person>();
+                       thistrucklist = new ArrayList<Truck>();
+                        b.setRealship(m.getAllShipForStatisticsWeekList(b.getShip()));
+                        for(int i : b.getPersonid()){
+                            thispersonlist.add(m.getAllPersonsForStat(i));
+                        }
+                        for(int i : b.getTruckid()){
+                            thistrucklist.add(m.getAllTrucksForStat(i));
+                        }
+                        b.setPersons(thispersonlist);
+                        b.setTrucks(thistrucklist);
+                    }
+                    
+                    
+                    for(Booking b : bookings){
+                        if(b.getSlot() == 1 || b.getSlot() == 2 || b.getSlot() == 3){
+                            total = 0;
+                            personstext = "";
+                            wagetext = "";
+                            trucktext = "";
+                            truckfeetext = "";
+                            shipnamelist.add(new Label("Ship: "+b.getRealship().namn()));
+                            stat.getChildren().add(shipnamelist.get(shipnamelist.size()-1));
+                            GridPane tempgrid = new GridPane();
+                            grid = new GridPane();
+                tempgrid.prefWidth(300);
+                tempgrid.setHgap(20);
+                personnelliststatlabel.add((new Label("Personal")));
+                wagepersonnellistlabel.add(new Label("Pris"));
+                truckidlistlabel.add(new Label("Truck"));
+                truckidfeelistlabel.add(new Label("Pris"));
+                tempgrid.add(personnelliststatlabel.get(personnelliststatlabel.size()-1), 0, 0);
+                tempgrid.add(wagepersonnellistlabel.get(wagepersonnellistlabel.size()-1), 1, 0);
+                tempgrid.add(truckidlistlabel.get(truckidlistlabel.size()-1), 2, 0);
+                tempgrid.add(truckidfeelistlabel.get(truckidfeelistlabel.size()-1), 3, 0);
+                for(Person p : b.getPersons())
+                    personstext = personstext + (p.förnamn()+","+p.efternamn()+"\n");
+                
+                personnelliststat.add(new Label(personstext));
+                tempgrid.add(personnelliststat.get(personnelliststat.size()-1), 0, 1);
+                GridPane.setValignment(personnelliststat.get(personnelliststat.size()-1), VPos.TOP);
+                wagetext = "";
+               
+                for(Person p : b.getPersons())
+                    if(p.status().equals("100%")){
+                        total = total + (Integer.parseInt(p.getwage())*8);
+                    wagetext = wagetext +((Integer.parseInt(p.getwage())*8)+"\n");
+                    }
+                    else if(p.status().equals("50%")){
+                        total = total + (Integer.parseInt(p.getwage())*4);
+                        wagetext = wagetext +((Integer.parseInt(p.getwage())*4)+"\n");
+                    }
+                wagepersonnellist.add(new Label(wagetext));
+                tempgrid.add(wagepersonnellist.get(wagepersonnellist.size()-1), 1, 1);
+                GridPane.setValignment(wagepersonnellist.get(wagepersonnellist.size()-1), VPos.TOP);
+                trucktext = "";
+                
+                for(Truck t : b.getTrucks())
+                    trucktext = trucktext + (t.getID()+"\n");
+                
+                truckidlist.add(new Label(trucktext));
+                tempgrid.add(truckidlist.get(truckidlist.size()-1), 2, 1);
+                GridPane.setValignment(truckidlist.get(truckidlist.size()-1), VPos.TOP);
+                truckfeetext = "";
+               
+                for(Truck t : b.getTrucks()){
+                    total = total + (t.gettruckfee()*8);
+                    truckfeetext = truckfeetext +((t.gettruckfee()*8)+"\n");
+                }
+                truckidfeelist.add(new Label(truckfeetext));
+                tempgrid.add(truckidfeelist.get(truckidfeelist.size()-1), 3, 1);
+                GridPane.setValignment(truckidfeelist.get(truckidfeelist.size()-1), VPos.TOP);
+                
+                        totalfees.add(new Label("\nTotal: "+total));
+                        tempgrid.add(totalfees.get(totalfees.size()-1), 1, 3);
+                        GridPane.setValignment(totalfees.get(totalfees.size()-1), VPos.TOP);
+                        gridpaneforstat.add(tempgrid);
+                        stat.getChildren().add(gridpaneforstat.get(gridpaneforstat.size()-1));
+                        }
+                        
+                    }
+                    
+                    
+                    lines.add(new Line(0,0,300,0));
+                    stat.getChildren().add(lines.get(lines.size()-1));
+                    stat.getChildren().add(kaj2);
+                    lines.add(new Line(0,0,300,0));
+                    stat.getChildren().add(lines.get(lines.size()-1));
+                    for(Booking b : bookings){
+                        if(b.getSlot() == 4 || b.getSlot() == 5 || b.getSlot() == 6){
+                             total = 0;
+                            personstext = "";
+                            wagetext = "";
+                            trucktext = "";
+                            truckfeetext = "";
+                            shipnamelist.add(new Label("Ship: "+b.getRealship().namn()));
+                            stat.getChildren().add(shipnamelist.get(shipnamelist.size()-1));
+                            GridPane tempgrid = new GridPane();
+                            grid = new GridPane();
+                tempgrid.prefWidth(300);
+                tempgrid.setHgap(20);
+                personnelliststatlabel.add((new Label("Personal")));
+                wagepersonnellistlabel.add(new Label("Pris"));
+                truckidlistlabel.add(new Label("Truck"));
+                truckidfeelistlabel.add(new Label("Pris"));
+                tempgrid.add(personnelliststatlabel.get(personnelliststatlabel.size()-1), 0, 0);
+                tempgrid.add(wagepersonnellistlabel.get(wagepersonnellistlabel.size()-1), 1, 0);
+                tempgrid.add(truckidlistlabel.get(truckidlistlabel.size()-1), 2, 0);
+                tempgrid.add(truckidfeelistlabel.get(truckidfeelistlabel.size()-1), 3, 0);
+                for(Person p : b.getPersons())
+                    personstext = personstext + (p.förnamn()+","+p.efternamn()+"\n");
+                
+                personnelliststat.add(new Label(personstext));
+                tempgrid.add(personnelliststat.get(personnelliststat.size()-1), 0, 1);
+                GridPane.setValignment(personnelliststat.get(personnelliststat.size()-1), VPos.TOP);
+                wagetext = "";
+               
+                for(Person p : b.getPersons())
+                    if(p.status().equals("100%")){
+                        total = total + (Integer.parseInt(p.getwage())*8);
+                    wagetext = wagetext +((Integer.parseInt(p.getwage())*8)+"\n");
+                    }
+                    else if(p.status().equals("50%")){
+                        total = total + (Integer.parseInt(p.getwage())*4);
+                        wagetext = wagetext +((Integer.parseInt(p.getwage())*4)+"\n");
+                    }
+                wagepersonnellist.add(new Label(wagetext));
+                tempgrid.add(wagepersonnellist.get(wagepersonnellist.size()-1), 1, 1);
+                GridPane.setValignment(wagepersonnellist.get(wagepersonnellist.size()-1), VPos.TOP);
+                trucktext = "";
+                
+                for(Truck t : b.getTrucks())
+                    trucktext = trucktext + (t.getID()+"\n");
+                
+                truckidlist.add(new Label(trucktext));
+                tempgrid.add(truckidlist.get(truckidlist.size()-1), 2, 1);
+                GridPane.setValignment(truckidlist.get(truckidlist.size()-1), VPos.TOP);
+                truckfeetext = "";
+               
+                for(Truck t : b.getTrucks()){
+                    total = total + (t.gettruckfee()*8);
+                    truckfeetext = truckfeetext +((t.gettruckfee()*8)+"\n");
+                }
+                truckidfeelist.add(new Label(truckfeetext));
+                tempgrid.add(truckidfeelist.get(truckidfeelist.size()-1), 3, 1);
+                GridPane.setValignment(truckidfeelist.get(truckidfeelist.size()-1), VPos.TOP);
+                
+                        totalfees.add(new Label("\nTotal: "+total));
+                        tempgrid.add(totalfees.get(totalfees.size()-1), 1, 3);
+                        GridPane.setValignment(totalfees.get(totalfees.size()-1), VPos.TOP);
+                        gridpaneforstat.add(tempgrid);
+                        stat.getChildren().add(gridpaneforstat.get(gridpaneforstat.size()-1));
+                        }
+                        
+                    }
+                    
+                    
+                    lines.add(new Line(0,0,300,0));
+                    stat.getChildren().add(lines.get(lines.size()-1));
+                    stat.getChildren().add(kaj3);
+                    lines.add(new Line(0,0,300,0));
+                    stat.getChildren().add(lines.get(lines.size()-1));
+                    for(Booking b : bookings){
+                        if(b.getSlot() == 7 || b.getSlot() == 8 || b.getSlot() == 9){
+                           total = 0;
+                            personstext = "";
+                            wagetext = "";
+                            trucktext = "";
+                            truckfeetext = "";
+                            shipnamelist.add(new Label("Ship: "+b.getRealship().namn()));
+                            stat.getChildren().add(shipnamelist.get(shipnamelist.size()-1));
+                            GridPane tempgrid = new GridPane();
+                            grid = new GridPane();
+                tempgrid.prefWidth(300);
+                tempgrid.setHgap(20);
+                personnelliststatlabel.add((new Label("Personal")));
+                wagepersonnellistlabel.add(new Label("Pris"));
+                truckidlistlabel.add(new Label("Truck"));
+                truckidfeelistlabel.add(new Label("Pris"));
+                tempgrid.add(personnelliststatlabel.get(personnelliststatlabel.size()-1), 0, 0);
+                tempgrid.add(wagepersonnellistlabel.get(wagepersonnellistlabel.size()-1), 1, 0);
+                tempgrid.add(truckidlistlabel.get(truckidlistlabel.size()-1), 2, 0);
+                tempgrid.add(truckidfeelistlabel.get(truckidfeelistlabel.size()-1), 3, 0);
+                for(Person p : b.getPersons())
+                    personstext = personstext + (p.förnamn()+","+p.efternamn()+"\n");
+                
+                personnelliststat.add(new Label(personstext));
+                tempgrid.add(personnelliststat.get(personnelliststat.size()-1), 0, 1);
+                GridPane.setValignment(personnelliststat.get(personnelliststat.size()-1), VPos.TOP);
+                wagetext = "";
+               
+                for(Person p : b.getPersons())
+                    if(p.status().equals("100%")){
+                        total = total + (Integer.parseInt(p.getwage())*8);
+                    wagetext = wagetext +((Integer.parseInt(p.getwage())*8)+"\n");
+                    }
+                    else if(p.status().equals("50%")){
+                        total = total + (Integer.parseInt(p.getwage())*4);
+                        wagetext = wagetext +((Integer.parseInt(p.getwage())*4)+"\n");
+                    }
+                wagepersonnellist.add(new Label(wagetext));
+                tempgrid.add(wagepersonnellist.get(wagepersonnellist.size()-1), 1, 1);
+                GridPane.setValignment(wagepersonnellist.get(wagepersonnellist.size()-1), VPos.TOP);
+                trucktext = "";
+                
+                for(Truck t : b.getTrucks())
+                    trucktext = trucktext + (t.getID()+"\n");
+                
+                truckidlist.add(new Label(trucktext));
+                tempgrid.add(truckidlist.get(truckidlist.size()-1), 2, 1);
+                GridPane.setValignment(truckidlist.get(truckidlist.size()-1), VPos.TOP);
+                truckfeetext = "";
+               
+                for(Truck t : b.getTrucks()){
+                    total = total + (t.gettruckfee()*8);
+                    truckfeetext = truckfeetext +((t.gettruckfee()*8)+"\n");
+                }
+                truckidfeelist.add(new Label(truckfeetext));
+                tempgrid.add(truckidfeelist.get(truckidfeelist.size()-1), 3, 1);
+                GridPane.setValignment(truckidfeelist.get(truckidfeelist.size()-1), VPos.TOP);
+                
+                        totalfees.add(new Label("\nTotal: "+total));
+                        tempgrid.add(totalfees.get(totalfees.size()-1), 1, 3);
+                        GridPane.setValignment(totalfees.get(totalfees.size()-1), VPos.TOP);
+                        gridpaneforstat.add(tempgrid);
+                        stat.getChildren().add(gridpaneforstat.get(gridpaneforstat.size()-1));
+                        }
+                        
+                    }
+                    } 
+                    
+                   statisticsPageVbox.getChildren().add(scroll);
+                   
+            }
+            
+        });
+        
+        
         return statisticsPageVbox;
         
     }

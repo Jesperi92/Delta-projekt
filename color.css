@@ -8,6 +8,9 @@
      -fx-background-image: url("grey-background-for-site11.jpg");
      -fx-font-family: "Helvetica";
 }
+ScrollPane{
+    -fx-background-image: url("grey-background-for-site11.jpg");
+}
 .button  {
     -fx-font-family: "Helvetica";
     

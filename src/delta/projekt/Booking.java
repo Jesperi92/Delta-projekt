@@ -13,6 +13,33 @@ public class Booking{
     String date;
     private List<Integer> truckid;
     private List<Integer> personid;
+    private List<Truck> trucks;
+    private List<Person> persons;
+    private Ship realship;
+
+    public Ship getRealship() {
+        return realship;
+    }
+
+    public void setRealship(Ship realship) {
+        this.realship = realship;
+    }
+
+    public List<Truck> getTrucks() {
+        return trucks;
+    }
+
+    public void setTrucks(List<Truck> trucks) {
+        this.trucks = trucks;
+    }
+
+    public List<Person> getPersons() {
+        return persons;
+    }
+
+    public void setPersons(List<Person> persons) {
+        this.persons = persons;
+    }
    
     public Booking(int ship, int slot,
 			String date){

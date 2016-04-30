@@ -20,4 +20,10 @@ public interface InterfaceDB{
     public List<Truck>getAllTrucksForBooking(String type);
     public List<Ship>getAllShipBooking(String date);
     public void addBooking(Booking m);
+    public List<Ship>getAllShipForStatistics(String date);
+    public Booking getBooking(String time, int Ship);
+    public Person getAllPersonsForStat(int id);
+    public Truck getAllTrucksForStat(int id);
+    public List<Booking> getBookingList(List<String> list);
+    public Ship getAllShipForStatisticsWeekList(int id);
 }

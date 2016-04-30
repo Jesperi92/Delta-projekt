@@ -272,27 +272,28 @@ public class Database implements InterfaceDB{
 	System.out.println(db.executeUpdate(SQL)+
 			   " rows inserted");
     }
-      
-      public List<Booking> getBooking(String time, int Ship){
-          ArrayList<Booking> list = new ArrayList<Booking>();
+      @Override
+      public Booking getBooking(String time, int Ship){
+          Booking booking = null;
           ArrayList<Integer> personnelid = new ArrayList<Integer>();
           ArrayList<Integer> truckid = new ArrayList<Integer>();
-	ResultSet rs = db.executeQuery("Select * FROM Booking WHERE Fartyg='"+Ship+"', Dag='"+time+"'"); 
+	ResultSet rs = db.executeQuery("Select * FROM Booking WHERE Fartyg='"+Ship+"' AND Dag='"+time+"'"); 
 	ResultSet personnel =null;
         ResultSet trucks = null;
         try{
 	    Booking m=null;
             personnel = null;
             trucks = null;
-	    while(rs.next()){
+	    
 		m=new Booking(rs.getInt("Fartyg"),
 				   rs.getInt("Slot"),
-				   rs.getTime("Dag").toString());
+				   rs.getString("Dag"));
                 m.setId(rs.getInt("LastID"));
                 
-                
+                booking = m;
 		
-		list.add(m);
+            
+            
                 personnel = db.executeQuery("Select * FROM BookedPersonnel WHERE LastID = '"+m.getId()+"'");
                 while(personnel.next()){
                     personnelid.add(personnel.getInt("PersonnelID"));
@@ -301,11 +302,12 @@ public class Database implements InterfaceDB{
                 while(trucks.next()){
                     truckid.add(trucks.getInt("TruckID"));
                 }
-	    }
+                m.setPersonid(personnelid);
+                m.setTruckid(truckid);
 	    db.closeIt(rs);
             db.closeIt(personnel);
             db.closeIt(trucks);
-	    return list;
+	    return booking;
             
 	}catch(Exception e){
 	    System.err.println("Getting all persons: " + e.getMessage());
@@ -476,5 +478,151 @@ public class Database implements InterfaceDB{
         }
         
     }
-   
+    @Override
+    public List<Ship>getAllShipForStatistics(String date){
+	ArrayList<Ship> list = new ArrayList<Ship>();
+	ResultSet rs = db.executeQuery("SELECT b.BoatID, b.Name, s.Name AS Owner, v.Volume FROM Boats b, Shippers s, Volumes v WHERE b.Owner=s.ShipperID AND b.Volume=v.VolumeID AND b.BoatID = (Select Fartyg From Booking Where Dag='"+date+"')");
+	try{
+	    Ship m=null;
+	    while(rs.next()){
+		m=new Ship(rs.getString("Name"),
+				   rs.getString("Owner"),
+				   rs.getString("Volume"));
+                                   
+		m.setID(rs.getInt("BoatID"));
+		list.add(m);
+	    }
+	    db.closeIt(rs);
+	    return list;
+            
+	}catch(Exception e){
+	    System.err.println("Getting all ships: " + e.getMessage());
+	    db.closeIt(rs);
+	}
+	return null;
+    }
+    @Override
+    public Person getAllPersonsForStat(int id){
+	
+	ResultSet rs = db.executeQuery("Select p.PersonnelID, p.FirstName, p.LastName, l.Licence, w.Status, s.Schedule, wa.Wage FROM Personnel p, Licences l, WorkStatuses w, WorkSchedules s, Wages wa WHERE p.Licence=l.LicenceID AND p.WorkStatus=w.WorkStatusID AND p.Schedule=s.ScheduleID AND p.Wage=wa.WageID AND p.PersonnelID='"+id+"'");
+	try{
+	    Person m=null;
+	    
+		m=new Person(rs.getString("FirstName"),
+				   rs.getString("LastName"),
+				   rs.getString("Licence"),
+                                   rs.getString("Status"),
+				   rs.getString("Schedule"));
+                m.setID(rs.getInt("PersonnelID"));
+                m.setWage(rs.getString("Wage"));
+		
+		
+	    
+	    db.closeIt(rs);
+	    return m;
+            
+	}catch(Exception e){
+	    System.err.println("Getting all persons: " + e.getMessage());
+	    db.closeIt(rs);
+	}
+	return null;
+    }
+    @Override
+    public Truck getAllTrucksForStat(int id){
+	
+	ResultSet rs = db.executeQuery("SELECT t.TruckID, tt.Type, ts.Status, tf.Fee From Trucks t, TruckTypes tt, TruckStatuses ts, TruckFees tf WHERE t.Type=tt.TypeID AND t.Status=ts.StstusID AND t.Fee=tf.FeeID AND t.TruckID = '"+id+"'");
+	try{
+	    Truck m=null;
+	    
+		m=new Truck(rs.getString("Type"),
+				   rs.getString("Status"));
+				  
+		m.setID(rs.getInt("TruckID"));
+                m.setFee(rs.getInt("Fee"));
+		
+	    
+	    db.closeIt(rs);
+	    return m;
+            
+	}catch(Exception e){
+	    System.err.println("Getting all trucks: " + e.getMessage());
+	    db.closeIt(rs);
+	}
+	return null;
+    }
+            @Override
+      public List<Booking> getBookingList(List<String> list){
+          List<Booking> bookings = new ArrayList<Booking>();
+          ArrayList<Integer> personnelid = new ArrayList<Integer>();
+          ArrayList<Integer> truckid = new ArrayList<Integer>();
+          ResultSet rs = null;
+          ResultSet personnel =null;
+            ResultSet trucks = null;
+          for(String s : list){
+              
+        try{
+	rs = db.executeQuery("Select * FROM Booking WHERE Dag='"+s+"'"); 
+	
+	    while(rs.next()){
+            Booking m=null;
+            personnel = null;
+            trucks = null;
+            personnelid.clear();
+            truckid.clear();
+		m=new Booking(rs.getInt("Fartyg"),
+				   rs.getInt("Slot"),
+				   rs.getString("Dag"));
+                m.setId(rs.getInt("LastID"));
+                
+              
+                personnel = db.executeQuery("Select * FROM BookedPersonnel WHERE LastID = '"+m.getId()+"'");
+                while(personnel.next()){
+                    personnelid.add(personnel.getInt("PersonnelID"));
+                }
+                trucks = db.executeQuery("Select * FROM BookedTrucks WHERE LastID = '"+m.getId()+"'");
+                while(trucks.next()){
+                    truckid.add(trucks.getInt("TruckID"));
+                }
+                m.setPersonid(personnelid);
+                m.setTruckid(truckid);
+                bookings.add(m);
+            }
+	    
+        }catch (SQLException ex) {
+         Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+         db.closeIt(rs);
+            db.closeIt(personnel);
+            db.closeIt(trucks);
+         
+        }  
+          }
+          db.closeIt(rs);
+            db.closeIt(personnel);
+            db.closeIt(trucks);
+	    return bookings;
+          }
+      
+       @Override
+    public Ship getAllShipForStatisticsWeekList(int id){
+	
+	ResultSet rs = db.executeQuery("SELECT b.BoatID, b.Name, s.Name AS Owner, v.Volume FROM Boats b, Shippers s, Volumes v WHERE b.Owner=s.ShipperID AND b.Volume=v.VolumeID AND b.BoatID = (Select Fartyg From Booking Where b.BoatID='"+id+"')");
+	try{
+	    Ship m=null;
+	    
+		m=new Ship(rs.getString("Name"),
+				   rs.getString("Owner"),
+				   rs.getString("Volume"));
+                                   
+		m.setID(rs.getInt("BoatID"));
+		
+	    
+	    db.closeIt(rs);
+	    return m;
+            
+	}catch(Exception e){
+	    System.err.println("Getting all ships: " + e.getMessage());
+	    db.closeIt(rs);
+	}
+	return null;
+    }
 }
