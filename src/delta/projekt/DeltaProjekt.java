@@ -612,23 +612,23 @@ public class DeltaProjekt extends Application {
                                         fader
                                 );
         addMessage.setVisible(false);
-        Label personFirstNameLabel = new Label("FirstName:");
-        Label personLastNameLabel = new Label("LastName:");
-        Label personDriverLicenseLabel = new Label("Driver License:");
+        Label personFirstNameLabel = new Label("Förnamn:");
+        Label personLastNameLabel = new Label("Efternamn:");
+        Label personDriverLicenseLabel = new Label("Körkort:");
         Label personStatusLabel = new Label("Status:");
-        Label personSchedualLabel = new Label("Schedual:");
+        Label personSchedualLabel = new Label("Schema:");
         
-        Label shipNameLabel = new Label("Name:");
-        Label shipCompanyLabel = new Label("Company:");
-        Label shipVolumeLabel = new Label("Volume");
+        Label shipNameLabel = new Label("Namn:");
+        Label shipCompanyLabel = new Label("Bolag:");
+        Label shipVolumeLabel = new Label("Volym");
         
-        Label truckTypeLabel = new Label("Type");
+        Label truckTypeLabel = new Label("Typ");
         Label truckStatusLabel = new Label("Status:");
         
         
-        Button back = new Button("Back");
+        Button back = new Button("Tillbaka");
         back.setPrefSize(120, 20);
-        Button add = new Button("Add");
+        Button add = new Button("Lägg till");
         add.setPrefSize(120, 20);
         
         final ChoiceBox comboBox = new ChoiceBox();
@@ -636,7 +636,7 @@ public class DeltaProjekt extends Application {
         comboBox.getItems().addAll(
         "Person",
         "Truck",
-        "Ship"
+        "Fartyg"
         );
         
         vbox.getChildren().addAll(comboBox,back);
@@ -677,7 +677,7 @@ public class DeltaProjekt extends Application {
                         });
                         
                         break;
-                    case "Ship":
+                    case "Fartyg":
                         vbox.getChildren().clear();
                         vbox.getChildren().addAll(comboBox,shipNameLabel, shipName,shipCompanyLabel,shipCompany,shipVolumeLabel,volume,addMessage,add,back);
                         add.setOnAction(new EventHandler<ActionEvent>() {
@@ -2374,9 +2374,3 @@ public class DeltaProjekt extends Application {
     }
     
 }
-/*
-Calendar cal = Calendar.getInstance();
-                    cal.set(Calendar.WEEK_OF_YEAR, 23);        
-                    cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-                    System.out.println(sdf.format(cal.getTime()));
-*/
