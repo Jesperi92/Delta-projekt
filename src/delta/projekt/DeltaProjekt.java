@@ -272,13 +272,13 @@ public class DeltaProjekt extends Application {
         Button goToStatisticsBtn = new Button();
         Button goToDailyBookingBtn = new Button();
         Button goToAlterResourcesBtn = new Button();
-        goToStatisticsBtn.setText("Statistics");
+        goToStatisticsBtn.setText("Statistik");
         goToStatisticsBtn.setPrefSize(100, 20);
-        goToDailyBookingBtn.setText("Daily Booking");
+        goToDailyBookingBtn.setText("Boka");
         goToDailyBookingBtn.setPrefSize(100, 20);
-        goToAlterResourcesBtn.setText("Alter resourcers");
+        goToAlterResourcesBtn.setText("Ändra Resurser");
         goToAlterResourcesBtn.setPrefSize(100, 20);
-        Button quitBtn = new Button("Quit");
+        Button quitBtn = new Button("Avsluta");
         quitBtn.setPrefSize(100, 20);
         quitBtn.setOnAction(e -> thestage.close());
         
@@ -296,13 +296,13 @@ public class DeltaProjekt extends Application {
         alterResourcesVbox.setAlignment(Pos.CENTER);
         Button addNewResourcesBtn = new Button();
         Button alterAResourceBtn = new Button();
-        addNewResourcesBtn.setText("Add a new resource");
+        addNewResourcesBtn.setText("Lägg till ny resurs");
         addNewResourcesBtn.setPrefSize(140, 20);
-        alterAResourceBtn.setText("Alter a resource");
+        alterAResourceBtn.setText("Ändra resurs");
         alterAResourceBtn.setPrefSize(140, 20);
         alterAResourceBtn.setOnAction(e -> thestage.setScene(alterAResourceScene));
         addNewResourcesBtn.setOnAction(e -> thestage.setScene(addResourceScene));
-        Button goBackBtn = new Button("Back");
+        Button goBackBtn = new Button("Tillbaka");
         goBackBtn.setPrefSize(140, 20);
         goBackBtn.setOnAction(e -> thestage.setScene(startScene));
         
@@ -328,11 +328,11 @@ public class DeltaProjekt extends Application {
                                 );
         alterMessage.setVisible(false);
        
-        Button back = new Button("Back");
+        Button back = new Button("Tillbaka");
         back.setPrefSize(120, 20);
-        Button remove = new Button("Remove");
+        Button remove = new Button("Ta bort");
         remove.setPrefSize(120, 20);
-        Button change = new Button("Change");
+        Button change = new Button("Ändra");
         change.setPrefSize(120, 20);
         
 
@@ -340,7 +340,7 @@ public class DeltaProjekt extends Application {
         comboBox.getItems().addAll(
         "Person",
         "Truck",
-        "Ship"
+        "Fartyg"
         );
         comboBox.getSelectionModel().clearSelection();
         
@@ -367,7 +367,7 @@ public class DeltaProjekt extends Application {
         wage.setCellValueFactory(
                 new PropertyValueFactory<>("wage"));
         
-        TableColumn trucktype = new TableColumn("TruckType");
+        TableColumn trucktype = new TableColumn("Trucktyp");
         trucktype.setCellValueFactory(
                 new PropertyValueFactory<>("trucktyp"));
         
@@ -379,7 +379,7 @@ public class DeltaProjekt extends Application {
         truckid.setCellValueFactory(
                 new PropertyValueFactory<>("id"));
         
-        TableColumn fee = new TableColumn("Fee");
+        TableColumn fee = new TableColumn("Kostnad");
         fee.setCellValueFactory(
                 new PropertyValueFactory<>("fee"));
         
@@ -387,11 +387,11 @@ public class DeltaProjekt extends Application {
         shipid.setCellValueFactory(
                 new PropertyValueFactory<>("shipid"));
         
-        TableColumn shipname = new TableColumn("Ship Name");
+        TableColumn shipname = new TableColumn("Fartygsnamn");
         shipname.setCellValueFactory(
                 new PropertyValueFactory<>("namn"));
         
-        TableColumn shipowner = new TableColumn("Owner");
+        TableColumn shipowner = new TableColumn("Bolag");
         shipowner.setCellValueFactory(
                 new PropertyValueFactory<>("bolag"));
         
@@ -443,7 +443,7 @@ public class DeltaProjekt extends Application {
                         vbox.getChildren().addAll(comboBox,tablev,alterMessage,change,remove,back);
                         
                         break;
-                    case "Ship":
+                    case "Fartyg":
                         tablev.getColumns().clear();
                         vbox.getChildren().clear();
                         
@@ -476,7 +476,7 @@ public class DeltaProjekt extends Application {
                     case "Person":
                         
                         m.removePerson(persons.get(tablev.getSelectionModel().getSelectedIndex()));
-                        alterMessage.setText("Removed");
+                        alterMessage.setText("Borttaget");
                         alterMessage.setVisible(true);
                                 blinkThenFade.play();
                         persons = m.getAllPersons();
@@ -491,7 +491,7 @@ public class DeltaProjekt extends Application {
                         
                     case "Truck":
                         m.removeTruck(trucks.get(tablev.getSelectionModel().getSelectedIndex()));
-                        alterMessage.setText("Removed");
+                        alterMessage.setText("Borttaget");
                         alterMessage.setVisible(true);
                                 blinkThenFade.play();
                         trucks = m.getAllTrucks();
@@ -504,9 +504,9 @@ public class DeltaProjekt extends Application {
                         tablev.setItems(oll);
                         
                         break;
-                    case "Ship":
+                    case "Fartyg":
                         m.removeShip(ships.get(tablev.getSelectionModel().getSelectedIndex()));
-                        alterMessage.setText("Removed");
+                        alterMessage.setText("Borttaget");
                         alterMessage.setVisible(true);
                                 blinkThenFade.play();
                         ships = m.getAllShip();
@@ -529,7 +529,7 @@ public class DeltaProjekt extends Application {
                 //if(!(listv.getSelectionModel().getSelectedIndex() == -1)){
                  switch (comboBox.getSelectionModel().getSelectedItem().toString()) {
                     case "Person":
-                        alterMessage.setText("Uppdated");
+                        alterMessage.setText("Ändrad");
                         changeperson = persons.get(tablev.getSelectionModel().getSelectedIndex());
                         changeARecourceScene = new Scene(getChangeAPersonSceneBorderPane(),500,550);
                         changeARecourceScene.getStylesheets().clear();
@@ -537,15 +537,15 @@ public class DeltaProjekt extends Application {
                         thestage.setScene(changeARecourceScene);
                         break;
                     case "Truck":
-                        alterMessage.setText("Uppdated");
+                        alterMessage.setText("Ändrad");
                         changetruck = trucks.get(tablev.getSelectionModel().getSelectedIndex());
                         changeARecourceScene = new Scene(getChangeATruckSceneBorderPane(),500,550);
                         changeARecourceScene.getStylesheets().clear();
                         changeARecourceScene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
                         thestage.setScene(changeARecourceScene);
                         break;
-                    case "Ship":
-                        alterMessage.setText("Uppdated");
+                    case "Fartyg":
+                        alterMessage.setText("Ändrad");
                         changeship = ships.get(tablev.getSelectionModel().getSelectedIndex());
                         changeARecourceScene = new Scene(getChangeAShipSceneBorderPane(),500,550);
                         changeARecourceScene.getStylesheets().clear();
@@ -738,20 +738,20 @@ public class DeltaProjekt extends Application {
         Line sträck = new Line(0,0,300,0);
         Line sträck2 = new Line(0,0,300,0);
         ChoiceBox choicebox = new ChoiceBox();
-        choicebox.getItems().addAll("Day Rapport", "Week Rapport");
+        choicebox.getItems().addAll("Dagsrapport", "Veckorapport");
         VBox daystat = new VBox(20);
         
         daystat.setAlignment(Pos.TOP_CENTER);
         daystat.setMaxWidth(300);
-        Button back = new Button("Back");
+        Button back = new Button("Tillbaka");
         back.setPrefSize(120, 20);
         Button next = new Button(">");
         next.setPrefSize(120, 20);
         Button backpointer = new Button("<");
         backpointer.setPrefSize(120, 20);
-        Label weekLabel = new Label("Week:");
-        Label dateLabel = new Label("Date:");
-        Label shipLabel = new Label("Ship:");
+        Label weekLabel = new Label("Vecka:");
+        Label dateLabel = new Label("Datum:");
+        Label shipLabel = new Label("Fartyg:");
         
         ComboBox week = new ComboBox();
         
@@ -768,11 +768,11 @@ public class DeltaProjekt extends Application {
         shipid.setCellValueFactory(
                 new PropertyValueFactory<>("shipid"));
         
-        TableColumn shipname = new TableColumn("Ship Name");
+        TableColumn shipname = new TableColumn("Fartygsnamn");
         shipname.setCellValueFactory(
                 new PropertyValueFactory<>("namn"));
         
-        TableColumn shipowner = new TableColumn("Owner");
+        TableColumn shipowner = new TableColumn("Bolag");
         shipowner.setCellValueFactory(
                 new PropertyValueFactory<>("bolag"));
         
@@ -791,12 +791,12 @@ public class DeltaProjekt extends Application {
             @Override
             public void handle(ActionEvent event) {
                 if(choicebox.getSelectionModel().getSelectedItem() != null){
-                if(choicebox.getSelectionModel().getSelectedItem().toString().equals("Day Rapport")){
+                if(choicebox.getSelectionModel().getSelectedItem().toString().equals("Dagsrapport")){
                     
                    statisticsPageVbox.getChildren().clear();
                    statisticsPageVbox.getChildren().addAll(choicebox,dateLabel,datePicker2,back);
                 }
-                else if(choicebox.getSelectionModel().getSelectedItem().toString().equals("Week Rapport")){
+                else if(choicebox.getSelectionModel().getSelectedItem().toString().equals("Veckorapport")){
                    statisticsPageVbox.getChildren().clear();
                    statisticsPageVbox.getChildren().addAll(choicebox,weekLabel,week,back);
                 }
@@ -816,6 +816,7 @@ public class DeltaProjekt extends Application {
             @Override
             public void handle(ActionEvent event) {
                 statisticsPageVbox.getChildren().clear();
+                
                 shipsstatistics = null;
                 tvships.clear();
                 shipsstatistics = m.getAllShipForStatistics(datePicker2.getValue().toString());
@@ -832,6 +833,11 @@ public class DeltaProjekt extends Application {
                 Ship selected = shipsstatistics.get(daytableview.getSelectionModel().getSelectedIndex());
                 daystatship.setText(selected.namn());
                 totalday = 0;
+                persons.clear();
+                trucks.clear();
+                
+                persons = new ArrayList<Person>();
+                trucks = new ArrayList<Truck>();
                 daybooking = m.getBooking(datePicker2.getValue().toString(), selected.getID());
                 daystatdate.setText(daybooking.getDate());
                 System.out.println(daybooking);
@@ -991,7 +997,7 @@ public class DeltaProjekt extends Application {
                             wagetext = "";
                             trucktext = "";
                             truckfeetext = "";
-                            shipnamelist.add(new Label("Ship: "+b.getRealship().namn()));
+                            shipnamelist.add(new Label("Fartyg: "+b.getRealship().namn()));
                             stat.getChildren().add(shipnamelist.get(shipnamelist.size()-1));
                             GridPane tempgrid = new GridPane();
                             grid = new GridPane();
@@ -1065,7 +1071,7 @@ public class DeltaProjekt extends Application {
                             wagetext = "";
                             trucktext = "";
                             truckfeetext = "";
-                            shipnamelist.add(new Label("Ship: "+b.getRealship().namn()));
+                            shipnamelist.add(new Label("Fartyg: "+b.getRealship().namn()));
                             stat.getChildren().add(shipnamelist.get(shipnamelist.size()-1));
                             GridPane tempgrid = new GridPane();
                             grid = new GridPane();
@@ -1139,7 +1145,7 @@ public class DeltaProjekt extends Application {
                             wagetext = "";
                             trucktext = "";
                             truckfeetext = "";
-                            shipnamelist.add(new Label("Ship: "+b.getRealship().namn()));
+                            shipnamelist.add(new Label("Fartyg: "+b.getRealship().namn()));
                             stat.getChildren().add(shipnamelist.get(shipnamelist.size()-1));
                             GridPane tempgrid = new GridPane();
                             grid = new GridPane();
@@ -1223,10 +1229,10 @@ public class DeltaProjekt extends Application {
                                 );
           datePicker.setPrefSize(120, 20);
           GridPane gridpane = new GridPane();
-          Button uppdate = new Button("Uppdate");
+          Button uppdate = new Button("Visa");
           uppdate.setPrefSize(120, 20);
           
-          Button goBackBtn = new Button("Back");
+          Button goBackBtn = new Button("Tillbaka");
             goBackBtn.setPrefSize(120, 20);
             goBackBtn.setOnAction(new EventHandler<ActionEvent>() {
               @Override
@@ -1262,11 +1268,11 @@ public class DeltaProjekt extends Application {
               }
           });
           
-          firstDock = new Label("Dock 101");
+          firstDock = new Label("Hamn 101");
           
-          secondDock = new Label("Dock 201");
+          secondDock = new Label("Hamn 201");
           
-          thirdDock = new Label("Dock 301");
+          thirdDock = new Label("Hamn 301");
                     
                         
           firstDock0816 = new Button("08-16");
@@ -1389,7 +1395,7 @@ public class DeltaProjekt extends Application {
                     thirdDock0008.setVisible(false);
                     thirdDock0816.setVisible(false);
                     thirdDock1600.setVisible(false);
-                    messages.setText("Select a date!");
+                    messages.setText("Välj ett datum!");
                     messages.setVisible(true);
                     blinkThenFade.play();
                 }
@@ -1485,7 +1491,7 @@ public class DeltaProjekt extends Application {
                  if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 1) == 0){
                    bookingslot = 1;
                    time.setText("00-08");
-                   harbor.setText("Habor: 101");
+                   harbor.setText("Hamn: 101");
                    date.setText(datePicker.getValue().toString());
                    ships = m.getAllShipBooking(date.getText());
                     
@@ -1506,7 +1512,7 @@ public class DeltaProjekt extends Application {
                  if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 2) == 0){
                     bookingslot=2;
                     time.setText("08-16");
-                    harbor.setText("Habor: 101");
+                    harbor.setText("Hamn: 101");
                     date.setText(datePicker.getValue().toString());
                     ships = m.getAllShipBooking(date.getText());
                     
@@ -1526,7 +1532,7 @@ public class DeltaProjekt extends Application {
                  if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 3) == 0){
                     bookingslot=3;
                     time.setText("16-00");
-                    harbor.setText("Habor: 101");
+                    harbor.setText("Hamn: 101");
                     date.setText(datePicker.getValue().toString());
                     ships = m.getAllShipBooking(date.getText());
                     
@@ -1546,7 +1552,7 @@ public class DeltaProjekt extends Application {
                  if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 4) == 0){
                     bookingslot=4;
                     time.setText("00-08");
-                    harbor.setText("Habor: 201");
+                    harbor.setText("Hamn: 201");
                     date.setText(datePicker.getValue().toString());
                     ships = m.getAllShipBooking(date.getText());
                     
@@ -1568,7 +1574,7 @@ public class DeltaProjekt extends Application {
                  if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 5) == 0){
                     bookingslot=5;
                     time.setText("08-16");
-                    harbor.setText("Habor: 201");
+                    harbor.setText("Hamn: 201");
                     date.setText(datePicker.getValue().toString());
                     ships = m.getAllShipBooking(date.getText());
                     
@@ -1588,7 +1594,7 @@ public class DeltaProjekt extends Application {
                  if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 6) == 0){
                     bookingslot=6;
                     time.setText("16-00");
-                    harbor.setText("Habor: 201");
+                    harbor.setText("Hamn: 201");
                     date.setText(datePicker.getValue().toString());
                     ships = m.getAllShipBooking(date.getText());
                     
@@ -1608,7 +1614,7 @@ public class DeltaProjekt extends Application {
                  if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 7) == 0){
                     bookingslot=7;
                     time.setText("00-08");
-                    harbor.setText("Habor: 301");
+                    harbor.setText("Hamn: 301");
                     date.setText(datePicker.getValue().toString());
                     ships = m.getAllShipBooking(date.getText());
                     
@@ -1628,7 +1634,7 @@ public class DeltaProjekt extends Application {
                  if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 8) == 0){
                     bookingslot=8;
                     time.setText("08-16");
-                    harbor.setText("Habor: 301");
+                    harbor.setText("Hamn: 301");
                     date.setText(datePicker.getValue().toString());
                     ships = m.getAllShipBooking(date.getText());
                     
@@ -1648,7 +1654,7 @@ public class DeltaProjekt extends Application {
                  if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 9) == 0){
                     bookingslot=9;
                     time.setText("16-00");
-                    harbor.setText("Habor: 301");
+                    harbor.setText("Hamn: 301");
                     date.setText(datePicker.getValue().toString());
                     ships = m.getAllShipBooking(date.getText());
                     
@@ -1695,8 +1701,8 @@ public class DeltaProjekt extends Application {
         pschedual.getItems().addAll("M-F","L-S","S");
         pschedual.getSelectionModel().select(changeperson.schema());
         
-        Button save = new Button("Save");
-        Button back = new Button("Back");
+        Button save = new Button("Spara");
+        Button back = new Button("Tillbaka");
         
         back.setPrefSize(120, 20);
         save.setPrefSize(120, 20);
@@ -1771,8 +1777,8 @@ public class DeltaProjekt extends Application {
         shipCompany.getItems().addAll("StenaLine", "FlyteTyg AB", "SiljaLine");
         shipCompany.getSelectionModel().select(changeship.bolag());
        
-        Button save = new Button("Save");
-        Button back = new Button("Back");
+        Button save = new Button("Spara");
+        Button back = new Button("Tillbaka");
         back.setPrefSize(120, 20);
         save.setPrefSize(120, 20);
         changeARecoursePageVbox.getChildren().setAll(id, shipname,shipvolume,shipCompany,save,back);
@@ -1838,8 +1844,8 @@ public class DeltaProjekt extends Application {
                                         fader
                                 );
         
-        Button save = new Button("Save");
-        Button back = new Button("Back");
+        Button save = new Button("Spara");
+        Button back = new Button("Tillbaka");
         back.setPrefSize(120, 20);
         save.setPrefSize(120, 20);
         changeARecoursePageVbox.getChildren().setAll(id, trucktyp,truckstatus,save,back);
@@ -1887,7 +1893,7 @@ public class DeltaProjekt extends Application {
           vbox.setAlignment(Pos.TOP_CENTER);
           vbox.setMaxWidth(300);
           vbox.setPadding(new Insets(15, 12, 15, 12));
-          Button back = new Button("Back");
+          Button back = new Button("Tillbaka");
           back.setPrefSize(120, 20);
           date = new Label();
           time = new Label(bookingtime);
@@ -1897,7 +1903,7 @@ public class DeltaProjekt extends Application {
           candidates = FXCollections.observableArrayList();
           selected = FXCollections.observableArrayList();
           
-        Label message = new Label("Choose a Ship!");
+        Label message = new Label("Välj ett fartyg!");
         
         FadeTransition fader = createFader(message);
                                 SequentialTransition blinkThenFade = new SequentialTransition(
@@ -1907,17 +1913,17 @@ public class DeltaProjekt extends Application {
                                 );
         message.setVisible(false);
         
-        Button next = new Button("Next");
+        Button next = new Button("Nästa");
         next.setPrefSize(120, 20);
         TableColumn shipid = new TableColumn("ID");
         shipid.setCellValueFactory(
                 new PropertyValueFactory<>("shipid"));
         
-        TableColumn shipname = new TableColumn("Ship Name");
+        TableColumn shipname = new TableColumn("Fartygsnamn");
         shipname.setCellValueFactory(
                 new PropertyValueFactory<>("namn"));
         
-        TableColumn shipowner = new TableColumn("Owner");
+        TableColumn shipowner = new TableColumn("Bolag");
         shipowner.setCellValueFactory(
                 new PropertyValueFactory<>("bolag"));
         
@@ -1951,8 +1957,8 @@ public class DeltaProjekt extends Application {
                       
                       bookedship = ships.get(tablev2.getSelectionModel().getFocusedIndex());
                       amountOfRecoursesToBook = m.getBookingRightAmountOfRecourses(bookedship.volymid());
-                      personnelmsg.setText("Pick "+amountOfRecoursesToBook+" persons");
-                      trucksmsg.setText("Pick "+amountOfRecoursesToBook+" trucks");
+                      personnelmsg.setText("Välj "+amountOfRecoursesToBook+" personer");
+                      trucksmsg.setText("Välj "+amountOfRecoursesToBook+" truckar");
                       if(datePicker.getValue().getDayOfWeek().toString().equals("MONDAY")||datePicker.getValue().getDayOfWeek().toString().equals("TUESDAY")||datePicker.getValue().getDayOfWeek().toString().equals("WEDNESDAY")||datePicker.getValue().getDayOfWeek().toString().equals("THURSDAY")||datePicker.getValue().getDayOfWeek().toString().equals("FRIDAY")){
                           persons = m.getAllPersonsForBooking("M-F", bookedship.volymid(), date.getText());
                           
@@ -2008,22 +2014,22 @@ public class DeltaProjekt extends Application {
     gridpane.setVgap(10);
     
    gridpane.setAlignment(Pos.CENTER);
-    Label candidatesLbl = new Label("Personnel");
+    Label candidatesLbl = new Label("Personal");
     GridPane.setHalignment(candidatesLbl, HPos.CENTER);
     gridpane.add(candidatesLbl, 0, 0);
-    Label personnel = new Label("Personnel");
+    Label personnel = new Label("Personal");
     personnelmsg = new Label();
-    Label rightp = new Label("Remember if you pick one what works 50% pick one more what works 50%");
+    Label rightp = new Label("Kom ihåg att om du väljer en person som jobbar 50% mpste du välja en till som jobbar 50%");
     
     
     
-    Label selectedLbl = new Label("Selected");
+    Label selectedLbl = new Label("Valda");
     gridpane.add(selectedLbl, 2, 0);
     GridPane.setHalignment(selectedLbl, HPos.CENTER);
-    Button back = new Button("Back");
+    Button back = new Button("Tillbaka");
     back.setPrefSize(120,20);
     
-    Button next = new Button("Next");
+    Button next = new Button("Nästa");
     next.setPrefSize(120, 20);
 
      Label message = new Label();
@@ -2111,7 +2117,7 @@ public class DeltaProjekt extends Application {
                  if(rightammountofpersonnel > amountOfRecoursesToBook){
                      rightammountofpersonnel = 0;
                      bookpersons.removeAll(heroListView.getItems());
-                     message.setText("To meny Personnel");
+                     message.setText("För många valda");
                       message.setVisible(true);
                                 blinkThenFade.play();
                           
@@ -2119,7 +2125,7 @@ public class DeltaProjekt extends Application {
                  else if(rightammountofpersonnel < amountOfRecoursesToBook){
                      rightammountofpersonnel=0;
                      bookpersons.removeAll(heroListView.getItems());
-                     message.setText("To few Personnel");
+                     message.setText("För få valda");
                       message.setVisible(true);
                                 blinkThenFade.play();
                       
@@ -2158,24 +2164,24 @@ public class DeltaProjekt extends Application {
     gridpane.setVgap(10);
     gridpane.setAlignment(Pos.CENTER);
 
-    Label candidatesLbl = new Label("Trucks");
+    Label candidatesLbl = new Label("Truckar");
     GridPane.setHalignment(candidatesLbl, HPos.CENTER);
     gridpane.add(candidatesLbl, 0, 0);
 
-    Label selectedLbl = new Label("Selected");
+    Label selectedLbl = new Label("Valda");
     gridpane.add(selectedLbl, 2, 0);
     GridPane.setHalignment(selectedLbl, HPos.CENTER);
-    Button back = new Button("Back");
+    Button back = new Button("Tillbaka");
     back.setPrefSize(120, 20);
     gridpane.add(back, 1, 4);
     // Candidates
-    Button book = new Button("Book");
+    Button book = new Button("Boka");
     book.setPrefSize(120, 20);
     gridpane.add(book, 1, 3);
     Label message = new Label();
     message.setVisible(false);
     
-    Label trucks = new Label("Trucks");
+    Label trucks = new Label("Truckar");
     
     FadeTransition fader = createFader(message);
                                 SequentialTransition blinkThenFade = new SequentialTransition(
@@ -2264,12 +2270,12 @@ public class DeltaProjekt extends Application {
                   
                   booktrucks.addAll(heroListView.getItems());
                  if(selected.size()< amountOfRecoursesToBook){
-                     message.setText("To few trucks!");
+                     message.setText("För få truckar!");
                      message.setVisible(true);
                                 blinkThenFade.play();
                  }
                  else if(selected.size()>amountOfRecoursesToBook){
-                     message.setText("To many trucks!");
+                     message.setText("För många truckar!");
                      message.setVisible(true);
                                 blinkThenFade.play();
                  }
@@ -2343,7 +2349,7 @@ public class DeltaProjekt extends Application {
                     thirdDock1600.getStyleClass().remove("action");
                 }
                      
-                     messages.setText("Booked");
+                     messages.setText("Bokat");
                      messages.setVisible(true);
                      blinkThenFadee.play();
                      candidates.clear();
