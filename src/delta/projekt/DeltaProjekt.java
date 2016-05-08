@@ -9,6 +9,7 @@ import com.sun.corba.se.impl.protocol.giopmsgheaders.Message;
 import java.awt.Font;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -1229,8 +1230,7 @@ public class DeltaProjekt extends Application {
                                 );
           datePicker.setPrefSize(120, 20);
           GridPane gridpane = new GridPane();
-          Button uppdate = new Button("Visa");
-          uppdate.setPrefSize(120, 20);
+          
           
           Button goBackBtn = new Button("Tillbaka");
             goBackBtn.setPrefSize(120, 20);
@@ -1326,8 +1326,7 @@ public class DeltaProjekt extends Application {
     gridpane.add(messages, 1, 0);
     GridPane.setHalignment(datePicker, HPos.CENTER);
     gridpane.add(datePicker, 1, 1);
-    GridPane.setHalignment(uppdate, HPos.CENTER);
-    gridpane.add(uppdate, 1, 2);
+    
     // First name label
     
                 GridPane.setHalignment(firstDock, HPos.CENTER);
@@ -1378,11 +1377,10 @@ public class DeltaProjekt extends Application {
     
     GridPane.setHalignment(goBackBtn, HPos.CENTER);
     gridpane.add(goBackBtn, 1, 3);
-    
-    uppdate.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                if(datePicker.getValue() == null){
+    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+    Date date2 = new Date();
+    datePicker.setValue(LocalDate.now());
+    if(datePicker.getValue() == null || datePicker.getValue().toString().compareTo(df.format(date2).toString())<0){
                     firstDock.setVisible(false);
                     secondDock.setVisible(false);
                     thirdDock.setVisible(false);
@@ -1395,7 +1393,102 @@ public class DeltaProjekt extends Application {
                     thirdDock0008.setVisible(false);
                     thirdDock0816.setVisible(false);
                     thirdDock1600.setVisible(false);
-                    messages.setText("Välj ett datum!");
+                    
+                }
+                else{
+                    firstDock.setVisible(true);
+                    secondDock.setVisible(true);
+                    thirdDock.setVisible(true);
+                    firstDock0008.setVisible(true);
+                    firstDock0816.setVisible(true);
+                    firstDock1600.setVisible(true);
+                    secondDock0008.setVisible(true);
+                    secondDock0816.setVisible(true);
+                    secondDock1600.setVisible(true);
+                    thirdDock0008.setVisible(true);
+                    thirdDock0816.setVisible(true);
+                    thirdDock1600.setVisible(true);
+                    
+                    
+                    
+    
+    
+              
+               bookingdate = datePicker.getValue().toString();
+               
+               
+                if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 1) == 1){
+                    firstDock0008.getStyleClass().add("action");
+                }
+                else{
+                    firstDock0008.getStyleClass().remove("action");
+                }
+                if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 2) == 1){
+                    firstDock0816.getStyleClass().add("action");
+                }
+                else{
+                    firstDock0816.getStyleClass().remove("action");
+                }
+                if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 3) == 1){
+                    firstDock1600.getStyleClass().add("action");
+                }
+                else{
+                    firstDock1600.getStyleClass().remove("action");
+                }
+                if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 4) == 1){
+                    secondDock0008.getStyleClass().add("action");
+                }
+                else{
+                    secondDock0008.getStyleClass().remove("action");
+                }
+                if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 5) == 1){
+                    secondDock0816.getStyleClass().add("action");
+                }
+                else{
+                    secondDock0816.getStyleClass().remove("action");
+                }
+                if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 6)==1){
+                    secondDock1600.getStyleClass().add("action");
+                }
+                else{
+                    secondDock1600.getStyleClass().remove("action");
+                }
+                if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 7) == 1){
+                    thirdDock0008.getStyleClass().add("action");
+                }
+                else{
+                    thirdDock0008.getStyleClass().remove("action");
+                }
+                if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 8) == 1){
+                    thirdDock0816.getStyleClass().add("action");
+                }
+                else{
+                    thirdDock0816.getStyleClass().remove("action");
+                }
+                if(m.getBookingCountFromDateAndSlot(datePicker.getValue().toString(), 9) == 1){
+                    thirdDock1600.getStyleClass().add("action");
+                }
+                else{
+                    thirdDock1600.getStyleClass().remove("action");
+                }
+                }
+    datePicker.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(datePicker.getValue() == null || datePicker.getValue().toString().compareTo(df.format(date2).toString())<0){
+                    firstDock.setVisible(false);
+                    secondDock.setVisible(false);
+                    thirdDock.setVisible(false);
+                    firstDock0008.setVisible(false);
+                    firstDock0816.setVisible(false);
+                    firstDock1600.setVisible(false);
+                    secondDock0008.setVisible(false);
+                    secondDock0816.setVisible(false);
+                    secondDock1600.setVisible(false);
+                    thirdDock0008.setVisible(false);
+                    thirdDock0816.setVisible(false);
+                    thirdDock1600.setVisible(false);
+                    messages.setText("Välj ett giltigt datum");
                     messages.setVisible(true);
                     blinkThenFade.play();
                 }
